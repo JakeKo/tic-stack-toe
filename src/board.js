@@ -3,10 +3,14 @@ function listToN(n) {
   return [...Array(n).keys()];
 }
 
-function Board(stateString = EMPTY_BOARD_STATE_STRING) {
-  const cells = stateString
+function getPieceValue(piece) {
+  return piece.split("")[1];
+}
+
+function Board(state = EMPTY_BOARD_STATE_STRING) {
+  const cells = state
     .split("|")
-    .map((cellString) => cellString.split(","));
+    .map((cellString) => cellString.split(",").filter((v) => v !== ""));
   const size = Math.sqrt(cells.length);
 
   const rowsNeededToWin = listToN(size).map((r) =>
@@ -25,6 +29,10 @@ function Board(stateString = EMPTY_BOARD_STATE_STRING) {
     ...diagsNeededToWin,
   ];
 
+  function stateString() {
+    return cells.map((row) => row.join(",")).join("|");
+  }
+
   function at(row, col) {
     return cells[row * size + col];
   }
@@ -35,7 +43,28 @@ function Board(stateString = EMPTY_BOARD_STATE_STRING) {
 
   function getWinnerAt(row, col) {
     const topPiece = topPieceAt(row, col);
-    return topPiece === "" ? "" : topPiece.split("")[0];
+    return topPiece ? topPiece.split("")[0] : undefined;
+  }
+
+  function place(piece, row, col) {
+    const newPieceValue = getPieceValue(piece);
+    const currentPieceValues = new Set(at(row, col).map(getPieceValue));
+
+    if (!currentPieceValues.has(newPieceValue)) {
+      cells[row * size + col].push(piece);
+      cells[row * size + col].sort((a, b) =>
+        getPieceValue(a) < getPieceValue(b) ? -1 : 1
+      );
+    }
+  }
+
+  function remove(piece, row, col) {
+    const pieces = at(row, col);
+    const index = pieces.indexOf(piece);
+
+    if (index !== -1) {
+      cells[row * size + col].splice(index, 1);
+    }
   }
 
   function checkForWinner() {
@@ -51,9 +80,10 @@ function Board(stateString = EMPTY_BOARD_STATE_STRING) {
 
   return {
     stateString,
-    cells,
     at,
     topPieceAt,
+    place,
+    remove,
     checkForWinner,
   };
 }
