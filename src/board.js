@@ -47,15 +47,19 @@ function Board(state = EMPTY_BOARD_STATE_STRING) {
   }
 
   function place(piece, row, col) {
-    const newPieceValue = getPieceValue(piece);
-    const currentPieceValues = new Set(at(row, col).map(getPieceValue));
-
-    if (!currentPieceValues.has(newPieceValue)) {
+    if (canPlacePieceAt(piece, row, col)) {
       cells[row * size + col].push(piece);
       cells[row * size + col].sort((a, b) =>
         getPieceValue(a) < getPieceValue(b) ? -1 : 1
       );
     }
+  }
+
+  function canPlacePieceAt(piece, row, col) {
+    const newPieceValue = getPieceValue(piece);
+    const currentPieceValues = new Set(at(row, col).map(getPieceValue));
+
+    return !currentPieceValues.has(newPieceValue);
   }
 
   function remove(piece, row, col) {
@@ -79,10 +83,12 @@ function Board(state = EMPTY_BOARD_STATE_STRING) {
   }
 
   return {
+    size,
     stateString,
     at,
     topPieceAt,
     place,
+    canPlacePieceAt,
     remove,
     checkForWinner,
   };

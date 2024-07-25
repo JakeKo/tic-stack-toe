@@ -2,7 +2,7 @@ function listToN(n) {
   return [...Array(n).keys()];
 }
 
-function Player(numSizes = 3) {
+function Player(numSizes = 3, name = "a") {
   const pieces = [...listToN(numSizes), ...listToN(numSizes)];
 
   function has(piece) {
@@ -22,10 +22,17 @@ function Player(numSizes = 3) {
     return pieces.length === 0;
   }
 
+  function getRandomPiece() {
+    const index = Math.round(Math.random() * (pieces.length - 1));
+    return pieces[index];
+  }
+
   return {
+    name,
     has,
     pullPieceFromInventory,
     isOutOfPieces,
+    getRandomPiece,
   };
 }
 

@@ -64,3 +64,12 @@ test("removes a piece", () => {
 
   expect(b.stateString()).toBe("||||||||");
 });
+
+test("checks if a piece can be placed at a cell", () => {
+  const b = new Board("a0||||||||");
+
+  expect(b.canPlacePieceAt("a0", 0, 0)).toBe(false);
+  expect(b.canPlacePieceAt("b0", 0, 0)).toBe(false);
+  expect(b.canPlacePieceAt("a0", 1, 0)).toBe(true);
+  expect(b.canPlacePieceAt("a1", 0, 0)).toBe(true);
+});
