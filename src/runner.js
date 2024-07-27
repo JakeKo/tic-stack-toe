@@ -12,7 +12,8 @@ function randomStrategy(board, player) {
     row = Math.round(Math.random() * (board.size - 1));
     col = Math.round(Math.random() * (board.size - 1));
 
-    validMove = board.canPlacePieceAt(player.name + piece, row, col);
+    console.log(piece, row, col);
+    validMove = board.canPlacePieceAt(piece, row, col);
   }
 
   return { piece, row, col };
@@ -20,26 +21,34 @@ function randomStrategy(board, player) {
 
 function playGame() {
   const board = new Board();
-  const playerA = new Player(3, "a");
-  const playerB = new Player(3, "b");
+  const playerA = new Player("a");
+  const playerB = new Player("b");
   let winner,
     gameOver = false;
 
   while (!gameOver) {
     const { piece, row, col } = randomStrategy(board, playerA);
     playerA.pullPieceFromInventory(piece);
-    board.place(playerA.name + piece, row, col);
+    board.place(piece, row, col);
 
     winner = board.checkForWinner();
     gameOver = winner ? true : false;
 
+    if (playerB.isOutOfPieces()) {
+      gameOver = true;
+    }
+
     if (!gameOver) {
       const { piece, row, col } = randomStrategy(board, playerB);
       playerB.pullPieceFromInventory(piece);
-      board.place(playerB.name + piece, row, col);
+      board.place(piece, row, col);
 
       winner = board.checkForWinner();
       gameOver = winner ? true : false;
+    }
+
+    if (playerA.isOutOfPieces()) {
+      gameOver = true;
     }
   }
 

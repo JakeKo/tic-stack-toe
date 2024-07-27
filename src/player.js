@@ -2,8 +2,12 @@ function listToN(n) {
   return [...Array(n).keys()];
 }
 
-function Player(numSizes = 3, name = "a") {
-  const pieces = [...listToN(numSizes), ...listToN(numSizes)];
+function Player(name, numSizes = 3, numSets = 2) {
+  const pieces = listToN(numSets)
+    .map(() => listToN(numSizes))
+    .reduce((t, v) => [...t, ...v])
+    .map((v) => `${name}${v}`);
+  // console.log(pieces);
 
   function has(piece) {
     return pieces.includes(piece);
