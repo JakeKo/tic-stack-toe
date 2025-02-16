@@ -93,6 +93,24 @@ test("gets all open slots for a player on an occupied board", () => {
   expect(actualOpenSlots).toStrictEqual(expectedOpenSlots);
 });
 
-test("gets all pluckable pieces for a player on an empty board", () => {});
+test("gets all pluckable pieces for a player on an empty board", () => {
+  const b = new Board();
 
-test("gets all pluckable pieces for a player on an occupied board", () => {});
+  expect(b.getAllPluckablePieces("p1")).toStrictEqual([]);
+});
+
+test("gets all pluckable pieces for a player on an occupied board", () => {
+  const b = new Board();
+  b.issueCommand({ player: "p1", slot: [0, 0, 0] });
+  b.issueCommand({ player: "p2", slot: [1, 0, 0] });
+  b.issueCommand({ player: "p1", slot: [1, 0, 1] });
+  b.issueCommand({ player: "p2", slot: [0, 1, 0] });
+  b.issueCommand({ player: "p1", slot: [0, 1, 1] });
+  b.issueCommand({ player: "p2", slot: [0, 1, 2] });
+
+  expect(b.getAllPluckablePieces("p1")).toStrictEqual([
+    [0, 0, 0],
+    [1, 0, 1],
+  ]);
+  expect(b.getAllPluckablePieces("p2")).toStrictEqual([[0, 1, 2]]);
+});

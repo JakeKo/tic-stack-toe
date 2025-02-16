@@ -70,6 +70,26 @@ class Board {
 
     return openSlots;
   }
+
+  getAllPluckablePieces(player) {
+    const pluckablePieces = [];
+    for (let x = 0; x < 3; x++) {
+      for (let y = 0; y < 3; y++) {
+        for (let i = 2; i >= 0; i--) {
+          const slot = this._cells[x][y][i];
+          if (slot) {
+            if (slot === player) {
+              pluckablePieces.push([x, y, i]);
+            }
+
+            break;
+          }
+        }
+      }
+    }
+
+    return pluckablePieces;
+  }
 }
 
 export default Board;
