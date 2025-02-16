@@ -40,23 +40,22 @@ class Board {
   issueCommand(command) {
     const {
       player,
-      piece,
-      cell: [x, y],
+      slot: [x, y, i],
     } = command;
 
     const cell = this._cells[x][y];
-    if (cell[piece]) {
-      throw new Error(`Piece collision in cell [${x}, ${y}]`);
+    if (cell[i]) {
+      throw new Error(`Piece collision in cell [${x}, ${y}, ${i}]`);
     }
 
-    cell[piece] = player;
+    cell[i] = player;
   }
 
   getCellState([x, y]) {
     return this._cells[x][y];
   }
 
-  getAllOpenSlots(player) {
+  getAllOpenSlots() {
     const openSlots = [];
     for (let x = 0; x < 3; x++) {
       for (let y = 0; y < 3; y++) {
