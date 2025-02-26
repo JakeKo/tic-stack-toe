@@ -37,18 +37,54 @@ class Board {
     this._cells = EMPTY_CELLS();
   }
 
-  issueCommand(command) {
-    const {
-      player,
-      slot: [x, y, i],
-    } = command;
-
+  // Checks if there are any pieces larger than the current slot
+  // This is useful to know if a player can place/pluck a piece in that slot
+  _isSlotPinned(slot) {
+    const [x, y, i] = slot;
     const cell = this._cells[x][y];
-    if (cell[i]) {
-      throw new Error(`Piece collision in cell [${x}, ${y}, ${i}]`);
+
+    for (let j = i + 1; j < cell.length; j++) {
+      if (cell[j]) {
+        return true;
+      }
     }
 
-    cell[i] = player;
+    return false;
+  }
+
+  issueCommand(command) {
+    const { player, pluck, slot } = command;
+    const [placeX, placeY, placeI] = slot;
+    const cell = this._cells[placeX][placeY];
+
+    if (pluck) {
+      const [pluckX, pluckY, pluckI] = pluck;
+      const pluckCell = this._cells[pluckX][pluckY];
+
+      if (pluckI !== placeI) {
+        throw new Error(`Trying to place the wrong piece in slot ${slot}`);
+      } else if (this._isSlotPinned(pluck)) {
+        throw new Error(`Piece plucked from pinned slot ${pluck}`);
+      } else if (pluckCell[pluckI] !== player) {
+        throw new Error(`Piece plucked from the wrong player ${pluck}`);
+      }
+    }
+
+    if (cell[placeI]) {
+      throw new Error(`Piece collision in slot ${slot}`);
+    }
+
+    // Checks for any larger pieces in the current cell and rejects the move
+    if (this._isSlotPinned(slot)) {
+      throw new Error(`Piece placed in a pinned slot ${slot}`);
+    }
+
+    cell[placeI] = player;
+    if (pluck) {
+      const [pluckX, pluckY, pluckI] = pluck;
+      const pluckCell = this._cells[pluckX][pluckY];
+      pluckCell[pluckI] = undefined;
+    }
   }
 
   getCellState([x, y]) {
