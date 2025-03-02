@@ -185,3 +185,19 @@ test("prevents a player plucking a piece into a pinned slot", () => {
   expect(b.getCellState([0, 0])).toStrictEqual(["p1", undefined, undefined]);
   expect(b.getCellState([1, 0])).toStrictEqual([undefined, "p2", undefined]);
 });
+
+test("checks for winner on an empty board", () => {
+  const b = new Board();
+
+  expect(b.checkForWinner()).toBe(undefined);
+});
+
+test("checks for winner on an occupied board", () => {
+  const b = new Board();
+  b.issueCommand({ player: "p1", slot: [0, 0, 0] });
+  b.issueCommand({ player: "p2", slot: [0, 1, 0] });
+  b.issueCommand({ player: "p1", slot: [0, 1, 1] });
+  b.issueCommand({ player: "p1", slot: [0, 2, 1] });
+
+  expect(b.checkForWinner()).toBe("p1");
+});

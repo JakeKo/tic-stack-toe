@@ -21,6 +21,49 @@ function EMPTY_CELLS() {
   ];
 }
 
+const WINNING_LINES = [
+  [
+    [0, 0],
+    [0, 1],
+    [0, 2],
+  ],
+  [
+    [1, 0],
+    [1, 1],
+    [1, 2],
+  ],
+  [
+    [2, 0],
+    [2, 1],
+    [2, 2],
+  ],
+  [
+    [0, 0],
+    [1, 0],
+    [2, 0],
+  ],
+  [
+    [0, 1],
+    [1, 1],
+    [2, 1],
+  ],
+  [
+    [0, 2],
+    [1, 2],
+    [2, 2],
+  ],
+  [
+    [0, 0],
+    [1, 1],
+    [2, 2],
+  ],
+  [
+    [2, 0],
+    [1, 1],
+    [0, 2],
+  ],
+];
+
 function findLastIndex(list, searchFunc) {
   let i = list.length - 1;
   for (i; i >= 0; i--) {
@@ -50,6 +93,19 @@ class Board {
     }
 
     return false;
+  }
+
+  _getCellOwner([x, y]) {
+    const cell = this._cells[x][y];
+
+    for (let i = cell.length - 1; i >= 0; i--) {
+      const slot = cell[i];
+      if (slot) {
+        return slot;
+      }
+    }
+
+    return undefined;
   }
 
   issueCommand(command) {
@@ -125,6 +181,20 @@ class Board {
     }
 
     return pluckablePieces;
+  }
+
+  checkForWinner() {
+    for (let i = 0; i < WINNING_LINES.length; i++) {
+      const line = WINNING_LINES[i];
+      const lineOwners = line.map((cell) => this._getCellOwner(cell));
+      const uniqueLineOwners = [...new Set(lineOwners)];
+
+      if (uniqueLineOwners.length === 1 && uniqueLineOwners[0]) {
+        return uniqueLineOwners[0];
+      }
+    }
+
+    return undefined;
   }
 }
 
