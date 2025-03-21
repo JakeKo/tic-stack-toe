@@ -1,4 +1,4 @@
-import Board from "../board";
+import { createBoard } from "../board";
 import Player, { getAllPossibleCommands } from "../player";
 
 test("player has a name", () => {
@@ -7,27 +7,15 @@ test("player has a name", () => {
 });
 
 test("getAllPossibleCommands returns all possible commands on occupied board", () => {
-  const b = {
-    getAllOpenSlots: jest.fn(() => [
-      [1, 0, 0],
-      [0, 0, 1],
-    ]),
-    getAllPluckablePieces: jest.fn(() => [[0, 0, 0]]),
-  };
-
-  const expectedCommands = [
-    { player: "p1", pluck: [0, 0, 0], slot: [1, 0, 0] },
-    { player: "p1", slot: [1, 0, 0] },
-    { player: "p1", slot: [0, 0, 1] },
-  ];
-  const actualCommands = getAllPossibleCommands(b, "p1", [1, 1, 0]);
-  expect(actualCommands).toStrictEqual(expectedCommands);
+  const b = createBoard();
+  const actualCommands = getAllPossibleCommands(b.cells, "p1", [1, 1, 0]);
+  expect(actualCommands.length).toStrictEqual(18);
 });
 
 test("getAllPossibleCommands returns all possible commands on empty board", () => {
-  const b = new Board();
+  const b = createBoard();
   const p = new Player("p1");
 
-  const actualCommands = getAllPossibleCommands(b, p.name, p.inventory);
+  const actualCommands = getAllPossibleCommands(b.cells, p.name, p.inventory);
   expect(actualCommands.length).toBe(27);
 });

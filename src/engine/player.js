@@ -1,6 +1,8 @@
-function RANDOM_STRATEGY(player, board) {
+import { getAllPluckablePieces, getAllOpenSlots } from "./board";
+
+function RANDOM_STRATEGY(player, cells) {
   const allPossibleCommands = getAllPossibleCommands(
-    board,
+    cells,
     player.name,
     player.inventory
   );
@@ -13,9 +15,9 @@ function RANDOM_STRATEGY(player, board) {
   }
 }
 
-function getAllPossibleCommands(board, playerName, playerInventory) {
-  const pluckablePieces = board.getAllPluckablePieces(playerName);
-  const openSlots = board.getAllOpenSlots();
+function getAllPossibleCommands(cells, playerName, playerInventory) {
+  const pluckablePieces = getAllPluckablePieces(cells, playerName);
+  const openSlots = getAllOpenSlots(cells);
   const allPossibleCommands = [];
 
   // Get all possible commands that involve plucking and placing a piece
@@ -50,8 +52,8 @@ class Player {
     this.strategy = strategy;
   }
 
-  getCommand(board) {
-    return this.strategy(this, board);
+  getCommand(cells) {
+    return this.strategy(this, cells);
   }
 }
 
