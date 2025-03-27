@@ -128,10 +128,13 @@ function getAllOpenSlots(cells) {
 
 function getAllPluckablePieces(cells, player) {
   const pluckablePieces = [];
+
   for (let x = 0; x < cells.length; x++) {
     for (let y = 0; y < cells[x].length; y++) {
+      // Iterate through the cell backwards to find the largest piece that belongs to the player
       for (let i = cells[x][y].length - 1; i >= 0; i--) {
         const slot = cells[x][y][i];
+
         if (slot) {
           if (slot === player) {
             pluckablePieces.push([x, y, i]);
@@ -149,12 +152,15 @@ function getAllPluckablePieces(cells, player) {
 function checkForWinner(cells) {
   const winningLines = generateWinningLines(cells.length);
 
+  // Iterate over all winning lines and check if there is a winner
   for (let i = 0; i < winningLines.length; i++) {
     const line = winningLines[i];
     const lineOwners = line.map((cell) => getCellWinner(cells, cell));
     const uniqueLineOwners = [...new Set(lineOwners)];
 
-    if (uniqueLineOwners.length === 1 && uniqueLineOwners[0]) {
+    // If there is exactly one owner for the line, then that owner is the winner
+    // uniqueLineOwners[0] will be undefined if the line is empty
+    if (uniqueLineOwners.length === 1) {
       return uniqueLineOwners[0];
     }
   }
