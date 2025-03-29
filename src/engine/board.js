@@ -1,3 +1,5 @@
+import { produce } from "immer";
+
 function generateEmptyCells(size, slotCount) {
   const cells = [];
 
@@ -102,12 +104,14 @@ function issueCommand(cells, command) {
     throw new Error(`Piece placed in a pinned slot ${slot}`);
   }
 
-  cell[placeI] = player;
-  if (pluck) {
-    const [pluckX, pluckY, pluckI] = pluck;
-    const pluckCell = cells[pluckX][pluckY];
-    pluckCell[pluckI] = undefined;
-  }
+  return produce(cells, (draftCells) => {
+    draftCells[placeX][placeY][placeI] = player;
+
+    if (pluck) {
+      const [pluckX, pluckY, pluckI] = pluck;
+      draftCells[pluckX][pluckY][pluckI] = undefined;
+    }
+  });
 }
 
 function getAllOpenSlots(cells) {
@@ -168,10 +172,17 @@ function checkForWinner(cells) {
   return undefined;
 }
 
-function createBoard(size = 3, slotCount = 3) {
-  return {
-    cells: generateEmptyCells(size, slotCount),
-  };
+function createBoard(size = 3, slotCount = 3, state = []) {
+  const cells = state.reduce(
+    (cells, command) =>
+      produce(cells, (draftCells) => {
+        const [x, y, i] = command.slot;
+        draftCells[x][y][i] = command.player;
+      }),
+    generateEmptyCells(size, slotCount)
+  );
+
+  return { cells };
 }
 
 export {

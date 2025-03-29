@@ -7,35 +7,30 @@ import {
 } from "../board";
 
 test("accepts valid command from a player", () => {
-  const b = createBoard();
+  const board = createBoard();
   const command = { player: "p1", slot: [0, 0, 1] };
+  let newCells;
 
-  expect(() => issueCommand(b.cells, command)).not.toThrow();
-  expect(b.cells[0][0]).toStrictEqual([undefined, "p1", undefined]);
+  expect(() => (newCells = issueCommand(board.cells, command))).not.toThrow();
+  expect(newCells[0][0]).toStrictEqual([undefined, "p1", undefined]);
 });
 
 test("detects collisions with an existing piece", () => {
-  const b = createBoard();
-  const c1 = { player: "p1", slot: [0, 0, 1] };
-  const c2 = { player: "p2", slot: [0, 0, 1] };
-  issueCommand(b.cells, c1);
+  const board = createBoard(3, 3, [{ player: "p1", slot: [0, 0, 1] }]);
+  const command = { player: "p2", slot: [0, 0, 1] };
 
-  expect(() => issueCommand(b.cells, c2)).toThrow();
-  expect(b.cells[0][0]).toStrictEqual([undefined, "p1", undefined]);
+  expect(() => issueCommand(board.cells, command)).toThrow();
 });
 
 test("prevents a player placing a piece in a pinned slot", () => {
-  const b = createBoard();
-  const c1 = { player: "p1", slot: [0, 0, 1] };
-  const c2 = { player: "p2", slot: [0, 0, 0] };
-  issueCommand(b.cells, c1);
+  const board = createBoard(3, 3, [{ player: "p1", slot: [0, 0, 1] }]);
+  const command = { player: "p2", slot: [0, 0, 0] };
 
-  expect(() => issueCommand(b.cells, c2)).toThrow();
-  expect(b.cells[0][0]).toStrictEqual([undefined, "p1", undefined]);
+  expect(() => issueCommand(board.cells, command)).toThrow();
 });
 
 test("gets all open slots for a player on an empty board", () => {
-  const b = createBoard();
+  const board = createBoard();
   const expectedOpenSlots = [
     [0, 0, 0],
     [0, 0, 1],
@@ -65,16 +60,17 @@ test("gets all open slots for a player on an empty board", () => {
     [2, 2, 1],
     [2, 2, 2],
   ].sort();
-  const actualOpenSlots = getAllOpenSlots(b.cells).sort();
+  const actualOpenSlots = getAllOpenSlots(board.cells).sort();
 
   expect(actualOpenSlots.length).toBe(27);
   expect(actualOpenSlots).toStrictEqual(expectedOpenSlots);
 });
 
 test("gets all open slots for a player on an occupied board", () => {
-  const b = createBoard();
-  issueCommand(b.cells, { player: "p1", slot: [0, 0, 1] });
-  issueCommand(b.cells, { player: "p2", slot: [1, 0, 2] });
+  const board = createBoard(3, 3, [
+    { player: "p1", slot: [0, 0, 1] },
+    { player: "p2", slot: [1, 0, 2] },
+  ]);
   const expectedOpenSlots = [
     [0, 0, 2],
     [2, 0, 0],
@@ -99,103 +95,99 @@ test("gets all open slots for a player on an occupied board", () => {
     [2, 2, 1],
     [2, 2, 2],
   ].sort();
-  const actualOpenSlots = getAllOpenSlots(b.cells).sort();
+  const actualOpenSlots = getAllOpenSlots(board.cells).sort();
 
   expect(actualOpenSlots.length).toBe(22);
   expect(actualOpenSlots).toStrictEqual(expectedOpenSlots);
 });
 
 test("gets all pluckable pieces for a player on an empty board", () => {
-  const b = createBoard();
+  const board = createBoard();
 
-  expect(getAllPluckablePieces(b.cells, "p1")).toStrictEqual([]);
+  expect(getAllPluckablePieces(board.cells, "p1")).toStrictEqual([]);
 });
 
 test("gets all pluckable pieces for a player on an occupied board", () => {
-  const b = createBoard();
-  issueCommand(b.cells, { player: "p1", slot: [0, 0, 0] });
-  issueCommand(b.cells, { player: "p2", slot: [1, 0, 0] });
-  issueCommand(b.cells, { player: "p1", slot: [1, 0, 1] });
-  issueCommand(b.cells, { player: "p2", slot: [0, 1, 0] });
-  issueCommand(b.cells, { player: "p1", slot: [0, 1, 1] });
-  issueCommand(b.cells, { player: "p2", slot: [0, 1, 2] });
+  const board = createBoard(3, 3, [
+    { player: "p1", slot: [0, 0, 0] },
+    { player: "p2", slot: [1, 0, 0] },
+    { player: "p1", slot: [1, 0, 1] },
+    { player: "p2", slot: [0, 1, 0] },
+    { player: "p1", slot: [0, 1, 1] },
+    { player: "p2", slot: [0, 1, 2] },
+  ]);
 
-  expect(getAllPluckablePieces(b.cells, "p1")).toStrictEqual([
+  expect(getAllPluckablePieces(board.cells, "p1")).toStrictEqual([
     [0, 0, 0],
     [1, 0, 1],
   ]);
-  expect(getAllPluckablePieces(b.cells, "p2")).toStrictEqual([[0, 1, 2]]);
+  expect(getAllPluckablePieces(board.cells, "p2")).toStrictEqual([[0, 1, 2]]);
 });
 
 test("lets a player pluck a piece", () => {
-  const b = createBoard();
-  issueCommand(b.cells, { player: "p1", slot: [0, 0, 0] });
-  issueCommand(b.cells, { player: "p1", pluck: [0, 0, 0], slot: [1, 0, 0] });
+  const board = createBoard(3, 3, [{ player: "p1", slot: [0, 0, 0] }]);
+  const command = { player: "p1", pluck: [0, 0, 0], slot: [1, 0, 0] };
+  let newCells;
 
-  expect(b.cells[0][0]).toStrictEqual([undefined, undefined, undefined]);
-  expect(b.cells[1][0]).toStrictEqual(["p1", undefined, undefined]);
+  expect(() => (newCells = issueCommand(board.cells, command))).not.toThrow();
+  expect(newCells[0][0]).toStrictEqual([undefined, undefined, undefined]);
+  expect(newCells[1][0]).toStrictEqual(["p1", undefined, undefined]);
 });
 
 test("prevents a player plucking a piece that is not theirs", () => {
-  const b = createBoard();
-  issueCommand(b.cells, { player: "p1", slot: [0, 0, 0] });
-  const c = { player: "p2", pluck: [0, 0, 0], slot: [1, 0, 0] };
+  const board = createBoard(3, 3, [{ player: "p1", slot: [0, 0, 0] }]);
+  const command = { player: "p2", pluck: [0, 0, 0], slot: [1, 0, 0] };
 
-  expect(() => issueCommand(b.cells, c)).toThrow();
-  expect(b.cells[0][0]).toStrictEqual(["p1", undefined, undefined]);
+  expect(() => issueCommand(board.cells, command)).toThrow();
 });
 
 test("prevents a player plucking a piece and placing it in the wrong slot", () => {
-  const b = createBoard();
-  issueCommand(b.cells, { player: "p1", slot: [0, 0, 0] });
-  const c = { player: "p1", pluck: [0, 0, 0], slot: [0, 0, 1] };
+  const board = createBoard(3, 3, [{ player: "p1", slot: [0, 0, 0] }]);
+  const command = { player: "p1", pluck: [0, 0, 0], slot: [0, 0, 1] };
 
-  expect(() => issueCommand(b.cells, c)).toThrow();
-  expect(b.cells[0][0]).toStrictEqual(["p1", undefined, undefined]);
+  expect(() => issueCommand(board.cells, command)).toThrow();
 });
 
 test("prevents a player plucking a piece that doesn't exist", () => {
-  const b = createBoard();
-  issueCommand(b.cells, { player: "p1", slot: [0, 0, 0] });
-  const c = { player: "p1", pluck: [0, 0, 1], slot: [0, 0, 2] };
+  const board = createBoard(3, 3, [{ player: "p1", slot: [0, 0, 0] }]);
+  const command = { player: "p1", pluck: [0, 0, 1], slot: [0, 0, 2] };
 
-  expect(() => issueCommand(b.cells, c)).toThrow();
-  expect(b.cells[0][0]).toStrictEqual(["p1", undefined, undefined]);
+  expect(() => issueCommand(board.cells, command)).toThrow();
 });
 
 test("prevents a player plucking a piece that is pinned", () => {
-  const b = createBoard();
-  issueCommand(b.cells, { player: "p1", slot: [0, 0, 0] });
-  issueCommand(b.cells, { player: "p2", slot: [0, 0, 1] });
-  const c = { player: "p1", pluck: [0, 0, 0], slot: [1, 0, 0] };
+  const board = createBoard(3, 3, [
+    { player: "p1", slot: [0, 0, 0] },
+    { player: "p2", slot: [0, 0, 1] },
+  ]);
+  const command = { player: "p1", pluck: [0, 0, 0], slot: [1, 0, 0] };
 
-  expect(() => issueCommand(b.cells, c)).toThrow();
-  expect(b.cells[0][0]).toStrictEqual(["p1", "p2", undefined]);
+  expect(() => issueCommand(board.cells, command)).toThrow();
 });
 
 test("prevents a player plucking a piece into a pinned slot", () => {
-  const b = createBoard();
-  issueCommand(b.cells, { player: "p1", slot: [0, 0, 0] });
-  issueCommand(b.cells, { player: "p2", slot: [1, 0, 1] });
-  const c = { player: "p1", pluck: [0, 0, 0], slot: [1, 0, 0] };
+  const board = createBoard(3, 3, [
+    { player: "p1", slot: [0, 0, 0] },
+    { player: "p2", slot: [1, 0, 1] },
+  ]);
+  const command = { player: "p1", pluck: [0, 0, 0], slot: [1, 0, 0] };
 
-  expect(() => issueCommand(b.cells, c)).toThrow();
-  expect(b.cells[0][0]).toStrictEqual(["p1", undefined, undefined]);
-  expect(b.cells[1][0]).toStrictEqual([undefined, "p2", undefined]);
+  expect(() => issueCommand(board.cells, command)).toThrow();
 });
 
 test("checks for winner on an empty board", () => {
-  const b = createBoard();
+  const board = createBoard();
 
-  expect(checkForWinner(b.cells)).toBe(undefined);
+  expect(checkForWinner(board.cells)).toBe(undefined);
 });
 
 test("checks for winner on an occupied board", () => {
-  const b = createBoard();
-  issueCommand(b.cells, { player: "p1", slot: [0, 0, 0] });
-  issueCommand(b.cells, { player: "p2", slot: [0, 1, 0] });
-  issueCommand(b.cells, { player: "p1", slot: [0, 1, 1] });
-  issueCommand(b.cells, { player: "p1", slot: [0, 2, 1] });
+  const board = createBoard(3, 3, [
+    { player: "p1", slot: [0, 0, 0] },
+    { player: "p2", slot: [0, 1, 0] },
+    { player: "p1", slot: [0, 1, 1] },
+    { player: "p1", slot: [0, 2, 1] },
+  ]);
 
-  expect(checkForWinner(b.cells)).toBe("p1");
+  expect(checkForWinner(board.cells)).toBe("p1");
 });
