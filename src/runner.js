@@ -12,7 +12,6 @@ function randomStrategy(board, player) {
     row = Math.round(Math.random() * (board.size - 1));
     col = Math.round(Math.random() * (board.size - 1));
 
-    console.log(piece, row, col);
     validMove = board.canPlacePieceAt(piece, row, col);
   }
 

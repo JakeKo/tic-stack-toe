@@ -7,7 +7,6 @@ function Player(name, numSizes = 3, numSets = 2) {
     .map(() => listToN(numSizes))
     .reduce((t, v) => [...t, ...v])
     .map((v) => `${name}${v}`);
-  // console.log(pieces);
 
   function has(piece) {
     return pieces.includes(piece);
