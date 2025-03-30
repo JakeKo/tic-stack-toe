@@ -1,46 +1,70 @@
-import { useEffect, useState } from "react";
-import "./app.css";
-import { playGame } from "./runner";
+import { useState } from "react";
+import "./App.css";
 import GameStats from "./gameStats";
+import { createBoard, issueCommand, toConsoleString } from "./engine/board";
+import { strategyRandom } from "./engine/strategy";
+import { createPlayer } from "./engine/player";
 
-function App() {
-  const [playerAWins, setPlayerAWins] = useState(0);
-  const [playerBWins, setPlayerBWins] = useState(0);
+function usePlayerHistory() {
+  const [wins, setWins] = useState(0);
   const [draws, setDraws] = useState(0);
+  const [losses, setLosses] = useState(0);
+  const [history, setHistory] = useState([]);
 
-  useEffect(() => {
-    const gameCount = 10;
-    let playerAWinsTemp = playerAWins;
-    let playerBWinsTemp = playerBWins;
-    let drawsTemp = draws;
+  function recordGameResult(result, against) {
+    setHistory((history) => [...history, { result, against }]);
 
-    for (let i = 0; i < gameCount; i++) {
-      const win = playGame();
+    if (result === "win") {
+      setWins((wins) => wins + 1);
+    } else if (result === "loss") {
+      setLosses((losses) => losses + 1);
+    } else {
+      setDraws((draws) => draws + 1);
+    }
+  }
 
-      if (win === "a") {
-        playerAWinsTemp++;
-      } else if (win === "b") {
-        playerBWinsTemp++;
-      } else {
-        drawsTemp++;
-      }
+  return [{ wins, losses, draws }, recordGameResult, history];
+}
+
+function playGame() {
+  let board = createBoard();
+  const p1 = createPlayer("p1");
+  const p2 = createPlayer("p2");
+
+  for (let i = 0; i < 10; i++) {
+    const cmd1 = strategyRandom(p1, board.cells);
+    board.cells = issueCommand(board.cells, cmd1);
+
+    if (!cmd1.pluck) {
+      const pieceSize = cmd1.slot[2];
+      p1.inventory[pieceSize]--;
     }
 
-    setPlayerAWins(playerAWinsTemp);
-    setPlayerBWins(playerBWinsTemp);
-    setDraws(drawsTemp);
-    // eslint-disable-next-line
-  }, []);
+    const cmd2 = strategyRandom(p2, board.cells);
+    board.cells = issueCommand(board.cells, cmd2);
+
+    if (!cmd2.pluck) {
+      const pieceSize = cmd2.slot[2];
+      p2.inventory[pieceSize]--;
+    }
+  }
+
+  return toConsoleString(board);
+}
+
+function App() {
+  const [p1History, recordP1GameResult] = usePlayerHistory();
+  const [p2History, recordP2GameResult] = usePlayerHistory();
+  playGame();
 
   return (
     <div className="app">
-      Hello World!
       <GameStats
         playerAName={"A"}
         playerBName={"B"}
-        playerAWins={playerAWins}
-        playerBWins={playerBWins}
-        draws={draws}
+        playerAWins={p1History.wins}
+        playerBWins={p2History.wins}
+        draws={p1History.draws}
       />
     </div>
   );

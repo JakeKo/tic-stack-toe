@@ -2,7 +2,7 @@ import {
   checkForWinner,
   createBoard,
   issueCommand,
-  toVisualString,
+  toConsoleString,
 } from "../board";
 import { createPlayer } from "../player";
 import { getAllPossibleCommands, strategyRandom } from "../strategy";
@@ -29,8 +29,11 @@ test("strategyRandom can play a game", () => {
   let board = createBoard();
   const p1 = createPlayer("p1");
   const p2 = createPlayer("p2");
+  const maxIter = 100;
+  let i = 0;
+  let winner;
 
-  for (let i = 0; i < 10; i++) {
+  while (!winner && i < maxIter) {
     const cmd1 = strategyRandom(p1, board.cells);
     board.cells = issueCommand(board.cells, cmd1);
 
@@ -47,14 +50,13 @@ test("strategyRandom can play a game", () => {
       p2.inventory[pieceSize]--;
     }
 
-    const winner = checkForWinner(board.cells);
-    console.log(
-      [
-        `${cmd1.slot} ${cmd1.pluck ?? "     "} ${p1.inventory}`,
-        `${cmd2.slot} ${cmd2.pluck ?? "     "} ${p2.inventory}`,
-        toVisualString(board),
-        winner ? `Winner: ${winner}` : "",
-      ].join("\n")
-    );
+    winner = checkForWinner(board.cells);
+    i++;
   }
+
+  console.log(
+    [toConsoleString(board), `Winner: ${winner} (${i} rounds)`].join("\n")
+  );
+
+  expect(winner).toBeDefined();
 });

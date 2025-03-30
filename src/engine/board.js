@@ -172,7 +172,7 @@ function checkForWinner(cells) {
   return undefined;
 }
 
-function toVisualString(board) {
+function toConsoleString(board) {
   function inferPlayerNamesFromBoard(cells) {
     const players = new Set();
 
@@ -242,5 +242,5 @@ export {
   getCellWinner,
   isSlotPinned,
   generateEmptyCells,
-  toVisualString,
+  toConsoleString,
 };
