@@ -172,6 +172,53 @@ function checkForWinner(cells) {
   return undefined;
 }
 
+function toVisualString(board) {
+  function inferPlayerNamesFromBoard(cells) {
+    const players = new Set();
+
+    cells.forEach((row) => {
+      row.forEach((cell) => {
+        cell.forEach((slot) => {
+          if (slot) {
+            players.add(slot);
+          }
+        });
+      });
+    });
+
+    return [...players];
+  }
+
+  const playerNames = inferPlayerNamesFromBoard(board.cells);
+  const maxPlayerNameLength = Math.max(...playerNames.map((p) => p.length));
+  const placeholder = "_".repeat(maxPlayerNameLength);
+
+  function getCellColor([x, y]) {
+    const winner = getCellWinner(board.cells, [x, y]);
+    if (winner) {
+      return winner === playerNames[0] ? "\u001b[31m" : "\u001b[32m";
+    } else {
+      return "\u001b[0m";
+    }
+  }
+
+  return board.cells
+    .map((row, x) =>
+      row
+        .map((cell, y) => {
+          const color = getCellColor([x, y]);
+
+          return (
+            color +
+            cell.map((slot) => slot ?? placeholder).join(" ") +
+            "\u001b[0m"
+          );
+        })
+        .join(" | ")
+    )
+    .join("\n");
+}
+
 function createBoard(size = 3, slotCount = 3, state = []) {
   const cells = state.reduce(
     (cells, command) =>
@@ -195,4 +242,5 @@ export {
   getCellWinner,
   isSlotPinned,
   generateEmptyCells,
+  toVisualString,
 };
