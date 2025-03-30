@@ -45,17 +45,11 @@ function getAllPossibleCommands(cells, playerName, playerInventory) {
   return allPossibleCommands;
 }
 
-class Player {
-  constructor(name, inventory = [2, 2, 2], strategy = RANDOM_STRATEGY) {
-    this.name = name;
-    this.inventory = inventory;
-    this.strategy = strategy;
-  }
-
-  getCommand(cells) {
-    return this.strategy(this, cells);
-  }
+function createPlayer(name, inventory = [2, 2, 2]) {
+  return {
+    name,
+    inventory,
+  };
 }
 
-export default Player;
-export { RANDOM_STRATEGY, getAllPossibleCommands };
+export { RANDOM_STRATEGY, getAllPossibleCommands, createPlayer };

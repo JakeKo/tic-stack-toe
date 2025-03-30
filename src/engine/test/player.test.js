@@ -1,21 +1,26 @@
 import { createBoard } from "../board";
-import Player, { getAllPossibleCommands } from "../player";
+import { getAllPossibleCommands, createPlayer } from "../player";
 
 test("player has a name", () => {
-  const p = new Player("p1");
-  expect(p.name).toBe("p1");
+  const player = createPlayer("p1");
+  expect(player.name).toBe("p1");
+  expect(player.inventory).toStrictEqual([2, 2, 2]);
 });
 
 test("getAllPossibleCommands returns all possible commands on occupied board", () => {
-  const b = createBoard();
-  const actualCommands = getAllPossibleCommands(b.cells, "p1", [1, 1, 0]);
+  const board = createBoard();
+  const actualCommands = getAllPossibleCommands(board.cells, "p1", [1, 1, 0]);
   expect(actualCommands.length).toStrictEqual(18);
 });
 
 test("getAllPossibleCommands returns all possible commands on empty board", () => {
-  const b = createBoard();
-  const p = new Player("p1");
+  const board = createBoard();
+  const player = createPlayer("p1");
 
-  const actualCommands = getAllPossibleCommands(b.cells, p.name, p.inventory);
+  const actualCommands = getAllPossibleCommands(
+    board.cells,
+    player.name,
+    player.inventory
+  );
   expect(actualCommands.length).toBe(27);
 });
