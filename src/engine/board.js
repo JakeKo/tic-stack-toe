@@ -219,6 +219,36 @@ function toConsoleString(board) {
     .join("\n");
 }
 
+function toPlaintextString(board) {
+  function inferPlayerNamesFromBoard(cells) {
+    const players = new Set();
+
+    cells.forEach((row) => {
+      row.forEach((cell) => {
+        cell.forEach((slot) => {
+          if (slot) {
+            players.add(slot);
+          }
+        });
+      });
+    });
+
+    return [...players];
+  }
+
+  const playerNames = inferPlayerNamesFromBoard(board.cells);
+  const maxPlayerNameLength = Math.max(...playerNames.map((p) => p.length));
+  const placeholder = "_".repeat(maxPlayerNameLength);
+
+  return board.cells
+    .map((row) =>
+      row
+        .map((cell) => cell.map((slot) => slot ?? placeholder).join(" "))
+        .join(" | ")
+    )
+    .join("\n");
+}
+
 function createBoard(size = 3, slotCount = 3, state = []) {
   const cells = state.reduce(
     (cells, command) =>
@@ -243,4 +273,5 @@ export {
   isSlotPinned,
   generateEmptyCells,
   toConsoleString,
+  toPlaintextString,
 };

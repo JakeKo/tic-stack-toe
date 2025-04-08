@@ -1,7 +1,12 @@
 import { useState } from "react";
 import "./App.css";
 import GameStats from "./gameStats";
-import { createBoard, issueCommand, toConsoleString } from "./engine/board";
+import {
+  checkForWinner,
+  createBoard,
+  issueCommand,
+  toPlaintextString,
+} from "./engine/board";
 import { strategyRandom } from "./engine/strategy";
 import { createPlayer } from "./engine/player";
 
@@ -31,13 +36,17 @@ function playGame() {
   const p1 = createPlayer("p1");
   const p2 = createPlayer("p2");
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 25; i++) {
     const cmd1 = strategyRandom(p1, board.cells);
     board.cells = issueCommand(board.cells, cmd1);
 
     if (!cmd1.pluck) {
       const pieceSize = cmd1.slot[2];
       p1.inventory[pieceSize]--;
+    }
+
+    if (checkForWinner(board.cells)) {
+      break;
     }
 
     const cmd2 = strategyRandom(p2, board.cells);
@@ -47,25 +56,46 @@ function playGame() {
       const pieceSize = cmd2.slot[2];
       p2.inventory[pieceSize]--;
     }
+
+    if (checkForWinner(board.cells)) {
+      break;
+    }
   }
 
-  return toConsoleString(board);
+  console.log(toPlaintextString(board));
+  return board;
 }
 
 function App() {
   const [p1History, recordP1GameResult] = usePlayerHistory();
   const [p2History, recordP2GameResult] = usePlayerHistory();
-  playGame();
+
+  function playGameRecordResults() {
+    const board = playGame();
+    const winner = checkForWinner(board.cells);
+
+    if (winner === "p1") {
+      recordP1GameResult("win", "A");
+      recordP2GameResult("loss", "B");
+    } else if (winner === "p2") {
+      recordP1GameResult("loss", "A");
+      recordP2GameResult("win", "B");
+    } else {
+      recordP1GameResult("draw", "A");
+      recordP2GameResult("draw", "B");
+    }
+  }
 
   return (
     <div className="app">
       <GameStats
-        playerAName={"A"}
-        playerBName={"B"}
-        playerAWins={p1History.wins}
-        playerBWins={p2History.wins}
+        p1Name={"p1"}
+        p2Name={"p2"}
+        p1Wins={p1History.wins}
+        p2Wins={p2History.wins}
         draws={p1History.draws}
       />
+      <button onClick={playGameRecordResults}>Play Game</button>
     </div>
   );
 }
