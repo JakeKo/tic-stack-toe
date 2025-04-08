@@ -44,3 +44,14 @@
   justify-content: flex-end;
   padding: 0 12px;
 }
+
+.board-display {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.cell {
+  border: 1px solid black;
+  box-sizing: border-box;
+}

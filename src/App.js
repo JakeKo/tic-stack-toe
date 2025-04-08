@@ -9,6 +9,7 @@ import {
 } from "./engine/board";
 import { strategyRandom } from "./engine/strategy";
 import { createPlayer } from "./engine/player";
+import BoardDisplay from "./boardDisplay";
 
 function usePlayerHistory() {
   const [wins, setWins] = useState(0);
@@ -69,6 +70,7 @@ function playGame() {
 function App() {
   const [p1History, recordP1GameResult] = usePlayerHistory();
   const [p2History, recordP2GameResult] = usePlayerHistory();
+  const [board, setBoard] = useState(createBoard());
 
   function playGameRecordResults() {
     const board = playGame();
@@ -84,6 +86,8 @@ function App() {
       recordP1GameResult("draw", "A");
       recordP2GameResult("draw", "B");
     }
+
+    setBoard(board);
   }
 
   return (
@@ -96,6 +100,7 @@ function App() {
         draws={p1History.draws}
       />
       <button onClick={playGameRecordResults}>Play Game</button>
+      <BoardDisplay board={board} />
     </div>
   );
 }
