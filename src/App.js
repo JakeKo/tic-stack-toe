@@ -32,10 +32,10 @@ function usePlayerHistory() {
   return [{ wins, losses, draws }, recordGameResult, history];
 }
 
-function playGame() {
+function playGame(p1Name, p2Name) {
   let board = createBoard();
-  const p1 = createPlayer("p1");
-  const p2 = createPlayer("p2");
+  const p1 = createPlayer(p1Name);
+  const p2 = createPlayer(p2Name);
 
   for (let i = 0; i < 25; i++) {
     const cmd1 = strategyRandom(p1, board.cells);
@@ -71,20 +71,22 @@ function App() {
   const [p1History, recordP1GameResult] = usePlayerHistory();
   const [p2History, recordP2GameResult] = usePlayerHistory();
   const [board, setBoard] = useState(createBoard());
+  const p1Name = "p1";
+  const p2Name = "p2";
 
   function playGameRecordResults() {
-    const board = playGame();
+    const board = playGame(p1Name, p2Name);
     const winner = checkForWinner(board.cells);
 
-    if (winner === "p1") {
-      recordP1GameResult("win", "A");
-      recordP2GameResult("loss", "B");
-    } else if (winner === "p2") {
-      recordP1GameResult("loss", "A");
-      recordP2GameResult("win", "B");
+    if (winner === p1Name) {
+      recordP1GameResult("win", p2Name);
+      recordP2GameResult("loss", p1Name);
+    } else if (winner === p2Name) {
+      recordP1GameResult("loss", p2Name);
+      recordP2GameResult("win", p1Name);
     } else {
-      recordP1GameResult("draw", "A");
-      recordP2GameResult("draw", "B");
+      recordP1GameResult("draw", p2Name);
+      recordP2GameResult("draw", p1Name);
     }
 
     setBoard(board);
@@ -93,14 +95,14 @@ function App() {
   return (
     <div className="app">
       <GameStats
-        p1Name={"p1"}
-        p2Name={"p2"}
+        p1Name={p1Name}
+        p2Name={p2Name}
         p1Wins={p1History.wins}
         p2Wins={p2History.wins}
         draws={p1History.draws}
       />
       <button onClick={playGameRecordResults}>Play Game</button>
-      <BoardDisplay board={board} />
+      <BoardDisplay board={board} p1Name={p1Name} />
     </div>
   );
 }
