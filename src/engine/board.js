@@ -3,32 +3,32 @@ import { produce } from "immer";
 function generateEmptyCells(size, slotCount) {
   const cells = [];
 
-  for (let i = 0; i < size; i++) {
-    const row = [];
+  for (let x = 0; x < size; x++) {
+    const col = [];
 
-    for (let j = 0; j < size; j++) {
-      row.push(Array(slotCount).fill(undefined));
+    for (let y = 0; y < size; y++) {
+      col.push(Array(slotCount).fill(undefined));
     }
 
-    cells.push(row);
+    cells.push(col);
   }
 
   return cells;
 }
 
-function generateWinningLines(size) {
+function calculateWinningLines(size) {
   const lines = [];
 
   // Generate winning rows
-  for (let i = 0; i < size; i++) {
-    const row = [...Array(size)].map((_, j) => [i, j]);
+  for (let j = 0; j < size; j++) {
+    const row = [...Array(size)].map((_, i) => [i, j]);
     lines.push(row);
   }
 
   // Generate winning columns
-  for (let j = 0; j < size; j++) {
-    const column = [...Array(size)].map((_, i) => [i, j]);
-    lines.push(column);
+  for (let i = 0; i < size; i++) {
+    const col = [...Array(size)].map((_, j) => [i, j]);
+    lines.push(col);
   }
 
   // Generate winning diagonals
@@ -66,15 +66,8 @@ function isSlotPinned(cells, slot) {
 
 function getCellWinner(cells, [x, y]) {
   const cell = cells[x][y];
-
-  for (let i = cell.length - 1; i >= 0; i--) {
-    const slot = cell[i];
-    if (slot) {
-      return slot;
-    }
-  }
-
-  return undefined;
+  const lastIndex = findLastIndex(cell, (slot) => !!slot);
+  return lastIndex === -1 ? undefined : cell[lastIndex];
 }
 
 function issueCommand(cells, command) {
@@ -136,16 +129,10 @@ function getAllPluckablePieces(cells, player) {
   for (let x = 0; x < cells.length; x++) {
     for (let y = 0; y < cells[x].length; y++) {
       // Iterate through the cell backwards to find the largest piece that belongs to the player
-      for (let i = cells[x][y].length - 1; i >= 0; i--) {
-        const slot = cells[x][y][i];
-
-        if (slot) {
-          if (slot === player) {
-            pluckablePieces.push([x, y, i]);
-          }
-
-          break;
-        }
+      const cell = cells[x][y];
+      const lastIndex = findLastIndex(cell, (slot) => !!slot);
+      if (lastIndex !== -1 && cell[lastIndex] === player) {
+        pluckablePieces.push([x, y, lastIndex]);
       }
     }
   }
@@ -154,7 +141,7 @@ function getAllPluckablePieces(cells, player) {
 }
 
 function checkForWinner(cells) {
-  const winningLines = generateWinningLines(cells.length);
+  const winningLines = calculateWinningLines(cells.length);
 
   // Iterate over all winning lines and check if there is a winner
   for (let i = 0; i < winningLines.length; i++) {
@@ -172,23 +159,23 @@ function checkForWinner(cells) {
   return undefined;
 }
 
-function toConsoleString(board) {
-  function inferPlayerNamesFromBoard(cells) {
-    const players = new Set();
+function inferPlayerNamesFromBoard(cells) {
+  const players = new Set();
 
-    cells.forEach((row) => {
-      row.forEach((cell) => {
-        cell.forEach((slot) => {
-          if (slot) {
-            players.add(slot);
-          }
-        });
+  cells.forEach((col) => {
+    col.forEach((cell) => {
+      cell.forEach((slot) => {
+        if (slot) {
+          players.add(slot);
+        }
       });
     });
+  });
 
-    return [...players];
-  }
+  return [...players];
+}
 
+function toConsoleString(board) {
   const playerNames = inferPlayerNamesFromBoard(board.cells);
   const maxPlayerNameLength = Math.max(...playerNames.map((p) => p.length));
   const placeholder = "_".repeat(maxPlayerNameLength);
@@ -202,51 +189,44 @@ function toConsoleString(board) {
     }
   }
 
-  return board.cells
-    .map((row, x) =>
-      row
-        .map((cell, y) => {
-          const color = getCellColor([x, y]);
+  // We swap y into the outer for loop here because we need to iterate row-wise
+  // Storing things as cells[x][y] means we would normally iterate column-wise
+  let s = "";
+  for (let y = 0; y < board.size; y++) {
+    for (let x = 0; x < board.size; x++) {
+      const cell = board.cells[x][y];
+      const color = getCellColor([x, y]);
+      s +=
+        color +
+        cell.map((slot) => slot ?? placeholder).join(" ") +
+        "\u001b[0m" +
+        " | ";
+    }
 
-          return (
-            color +
-            cell.map((slot) => slot ?? placeholder).join(" ") +
-            "\u001b[0m"
-          );
-        })
-        .join(" | ")
-    )
-    .join("\n");
+    s += "\n";
+  }
+
+  return s;
 }
 
 function toPlaintextString(board) {
-  function inferPlayerNamesFromBoard(cells) {
-    const players = new Set();
-
-    cells.forEach((row) => {
-      row.forEach((cell) => {
-        cell.forEach((slot) => {
-          if (slot) {
-            players.add(slot);
-          }
-        });
-      });
-    });
-
-    return [...players];
-  }
-
   const playerNames = inferPlayerNamesFromBoard(board.cells);
   const maxPlayerNameLength = Math.max(...playerNames.map((p) => p.length));
   const placeholder = "_".repeat(maxPlayerNameLength);
 
-  return board.cells
-    .map((row) =>
-      row
-        .map((cell) => cell.map((slot) => slot ?? placeholder).join(" "))
-        .join(" | ")
-    )
-    .join("\n");
+  // We swap y into the outer for loop here because we need to iterate row-wise
+  // Storing things as cells[x][y] means we would normally iterate column-wise
+  let s = "";
+  for (let y = 0; y < board.size; y++) {
+    for (let x = 0; x < board.size; x++) {
+      const cell = board.cells[x][y];
+      s += cell.map((slot) => slot ?? placeholder).join(" ") + " | ";
+    }
+
+    s += "\n";
+  }
+
+  return s;
 }
 
 function createBoard(size = 3, slotCount = 3, state = []) {
@@ -259,33 +239,7 @@ function createBoard(size = 3, slotCount = 3, state = []) {
     generateEmptyCells(size, slotCount)
   );
 
-  return { cells };
-}
-
-function getCellsRowWise(cells) {
-  const cellsRowWise = { cells: [], indices: [] };
-
-  for (let i = 0; i < cells.length; i++) {
-    for (let j = 0; j < cells.length; j++) {
-      cellsRowWise.cells.push(cells[j][i]);
-      cellsRowWise.indices.push([j, i]);
-    }
-  }
-
-  return cellsRowWise;
-}
-
-function getCellsColumnWise(cells) {
-  const cellsColumnWise = { cells: [], indices: [] };
-
-  for (let i = 0; i < cells.length; i++) {
-    for (let j = 0; j < cells.length; j++) {
-      cellsColumnWise.cells.push(cells[i][j]);
-      cellsColumnWise.indices.push([i, j]);
-    }
-  }
-
-  return cellsColumnWise;
+  return { cells, size, slotCount };
 }
 
 export {
@@ -294,12 +248,9 @@ export {
   getAllOpenSlots,
   getAllPluckablePieces,
   checkForWinner,
-  generateWinningLines,
   getCellWinner,
   isSlotPinned,
   generateEmptyCells,
   toConsoleString,
   toPlaintextString,
-  getCellsRowWise,
-  getCellsColumnWise,
 };
