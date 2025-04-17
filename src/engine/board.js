@@ -262,6 +262,32 @@ function createBoard(size = 3, slotCount = 3, state = []) {
   return { cells };
 }
 
+function getCellsRowWise(cells) {
+  const cellsRowWise = { cells: [], indices: [] };
+
+  for (let i = 0; i < cells.length; i++) {
+    for (let j = 0; j < cells.length; j++) {
+      cellsRowWise.cells.push(cells[j][i]);
+      cellsRowWise.indices.push([j, i]);
+    }
+  }
+
+  return cellsRowWise;
+}
+
+function getCellsColumnWise(cells) {
+  const cellsColumnWise = { cells: [], indices: [] };
+
+  for (let i = 0; i < cells.length; i++) {
+    for (let j = 0; j < cells.length; j++) {
+      cellsColumnWise.cells.push(cells[i][j]);
+      cellsColumnWise.indices.push([i, j]);
+    }
+  }
+
+  return cellsColumnWise;
+}
+
 export {
   createBoard,
   issueCommand,
@@ -274,4 +300,6 @@ export {
   generateEmptyCells,
   toConsoleString,
   toPlaintextString,
+  getCellsRowWise,
+  getCellsColumnWise,
 };

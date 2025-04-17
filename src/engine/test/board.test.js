@@ -3,6 +3,8 @@ import {
   createBoard,
   getAllOpenSlots,
   getAllPluckablePieces,
+  getCellsColumnWise,
+  getCellsRowWise,
   issueCommand,
 } from "../board";
 
@@ -190,4 +192,34 @@ test("checks for winner on an occupied board", () => {
   ]);
 
   expect(checkForWinner(board.cells)).toBe("p1");
+});
+
+test("gets cells column-wise", () => {
+  const board = createBoard(2, 2, [
+    { player: "p1", slot: [0, 0, 0] },
+    { player: "p2", slot: [0, 1, 0] },
+  ]);
+  const { indices } = getCellsColumnWise(board.cells);
+
+  expect(indices).toStrictEqual([
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+  ]);
+});
+
+test("gets cells row-wise", () => {
+  const board = createBoard(2, 2, [
+    { player: "p1", slot: [0, 0, 0] },
+    { player: "p2", slot: [0, 1, 0] },
+  ]);
+  const { indices } = getCellsRowWise(board.cells);
+
+  expect(indices).toStrictEqual([
+    [0, 0],
+    [1, 0],
+    [0, 1],
+    [1, 1],
+  ]);
 });
