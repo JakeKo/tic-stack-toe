@@ -54,4 +54,16 @@
 .cell {
   border: 1px solid black;
   box-sizing: border-box;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+.piece {
+  aspect-ratio: 1;
+  grid-area: 1 / 1 / 2 / 2;
+  border-radius: 50%;
+  border: 20px solid black;
+  box-sizing: border-box;
+  background-color: white;
 }
