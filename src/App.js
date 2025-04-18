@@ -1,12 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import GameStats from "./gameStats";
-import {
-  checkForWinner,
-  createBoard,
-  issueCommand,
-  toPlaintextString,
-} from "./engine/board";
+import { checkForWinner, createBoard, issueCommand } from "./engine/board";
 import { strategyRandom } from "./engine/strategy";
 import { createPlayer } from "./engine/player";
 import BoardDisplay from "./boardDisplay";
@@ -32,12 +27,13 @@ function usePlayerHistory() {
   return [{ wins, losses, draws }, recordGameResult, history];
 }
 
-function playGame(p1Name, p2Name) {
+function playGame(p1Name = "P1", p2Name = "P2") {
   let board = createBoard();
+  let turnCount = 0;
   const p1 = createPlayer(p1Name);
   const p2 = createPlayer(p2Name);
 
-  for (let i = 0; i < 25; i++) {
+  for (let i = 0; i < 100; i++) {
     const cmd1 = strategyRandom(p1, board.cells);
     board.cells = issueCommand(board.cells, cmd1);
 
@@ -46,6 +42,7 @@ function playGame(p1Name, p2Name) {
       p1.inventory[pieceSize]--;
     }
 
+    turnCount++;
     if (checkForWinner(board.cells)) {
       break;
     }
@@ -58,25 +55,39 @@ function playGame(p1Name, p2Name) {
       p2.inventory[pieceSize]--;
     }
 
+    turnCount++;
     if (checkForWinner(board.cells)) {
       break;
     }
   }
 
-  console.log(toPlaintextString(board));
-  return board;
+  return {
+    board,
+    turnCount,
+    winner: checkForWinner(board.cells),
+  };
 }
 
 function App() {
   const [p1History, recordP1GameResult] = usePlayerHistory();
   const [p2History, recordP2GameResult] = usePlayerHistory();
   const [board, setBoard] = useState(createBoard());
-  const p1Name = "p1";
-  const p2Name = "p2";
+  const [playGames, setPlayGames] = useState(false);
+  const p1Name = "P1";
+  const p2Name = "P2";
+
+  useEffect(() => {
+    if (playGames) {
+      const intervalId = setInterval(() => {
+        playGameRecordResults();
+      }, 1000);
+      return () => clearInterval(intervalId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playGames]);
 
   function playGameRecordResults() {
-    const board = playGame(p1Name, p2Name);
-    const winner = checkForWinner(board.cells);
+    const { board, winner } = playGame(p1Name, p2Name);
 
     if (winner === p1Name) {
       recordP1GameResult("win", p2Name);
@@ -102,6 +113,7 @@ function App() {
         draws={p1History.draws}
       />
       <button onClick={playGameRecordResults}>Play Game</button>
+      <button onClick={() => setPlayGames(!playGames)}>Play Games</button>
       <BoardDisplay board={board} p1Name={p1Name} />
     </div>
   );
