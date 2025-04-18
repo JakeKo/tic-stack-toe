@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import GameStats from "./gameStats";
-import { checkForWinner, createBoard, issueCommand } from "./engine/board";
-import { strategyRandom } from "./engine/strategy";
-import { createPlayer } from "./engine/player";
+import { createBoard } from "./engine/board";
+import { playGame } from "./engine/strategy";
 import BoardDisplay from "./boardDisplay";
 
 function usePlayerHistory() {
@@ -27,47 +26,6 @@ function usePlayerHistory() {
   return [{ wins, losses, draws }, recordGameResult, history];
 }
 
-function playGame(p1Name = "P1", p2Name = "P2") {
-  let board = createBoard();
-  let turnCount = 0;
-  const p1 = createPlayer(p1Name);
-  const p2 = createPlayer(p2Name);
-
-  for (let i = 0; i < 100; i++) {
-    const cmd1 = strategyRandom(p1, board.cells);
-    board.cells = issueCommand(board.cells, cmd1);
-
-    if (!cmd1.pluck) {
-      const pieceSize = cmd1.slot[2];
-      p1.inventory[pieceSize]--;
-    }
-
-    turnCount++;
-    if (checkForWinner(board.cells)) {
-      break;
-    }
-
-    const cmd2 = strategyRandom(p2, board.cells);
-    board.cells = issueCommand(board.cells, cmd2);
-
-    if (!cmd2.pluck) {
-      const pieceSize = cmd2.slot[2];
-      p2.inventory[pieceSize]--;
-    }
-
-    turnCount++;
-    if (checkForWinner(board.cells)) {
-      break;
-    }
-  }
-
-  return {
-    board,
-    turnCount,
-    winner: checkForWinner(board.cells),
-  };
-}
-
 function App() {
   const [p1History, recordP1GameResult] = usePlayerHistory();
   const [p2History, recordP2GameResult] = usePlayerHistory();
@@ -80,14 +38,15 @@ function App() {
     if (playGames) {
       const intervalId = setInterval(() => {
         playGameRecordResults();
-      }, 1000);
+      }, 2000);
       return () => clearInterval(intervalId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playGames]);
 
   function playGameRecordResults() {
-    const { board, winner } = playGame(p1Name, p2Name);
+    const game = playGame(p1Name, p2Name);
+    const { board, winner } = game;
 
     if (winner === p1Name) {
       recordP1GameResult("win", p2Name);
@@ -114,7 +73,7 @@ function App() {
       />
       <button onClick={playGameRecordResults}>Play Game</button>
       <button onClick={() => setPlayGames(!playGames)}>Play Games</button>
-      <BoardDisplay board={board} p1Name={p1Name} />
+      <BoardDisplay board={board} p1Name={p1Name} p2Name={p2Name} />
     </div>
   );
 }

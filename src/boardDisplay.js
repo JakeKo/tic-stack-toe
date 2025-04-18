@@ -1,25 +1,30 @@
 import { getCellWinner } from "./engine/board";
 
-function BoardDisplay({ board, p1Name }) {
-  function getGridCoordinates(row, col) {
-    return {
-      gridArea: `${row} / ${col} / ${row + 1} / ${col + 1}`,
-    };
-  }
+const PIECE_SIZE = 15;
 
-  function getCellColor(x, y) {
+function BoardDisplay({ board, p1Name, p2Name }) {
+  const BACKGROUND_COLOR_MAP = {
+    [p1Name]: "lightgreen",
+    [p2Name]: "lightcoral",
+    undefined: "white",
+  };
+  const PIECE_COLOR_MAP = {
+    [p1Name]: "green",
+    [p2Name]: "red",
+  };
+
+  function getCellStyle(x, y) {
     const winner = getCellWinner(board.cells, [x, y]);
-    if (winner) {
-      return winner === p1Name ? "lightgreen" : "lightcoral";
-    } else {
-      return "white";
-    }
+    return {
+      gridArea: `${y + 1} / ${x + 1} / ${y + 2} / ${x + 2}`,
+      backgroundColor: BACKGROUND_COLOR_MAP[winner],
+    };
   }
 
   function getPieceStyle(playerName, index) {
     return {
-      borderColor: playerName === p1Name ? "green" : "red",
-      width: `${(index + 1) * 40}px`,
+      border: `${PIECE_SIZE}px solid ${PIECE_COLOR_MAP[playerName]}`,
+      width: `${(index + 1) * PIECE_SIZE * 2}px`,
       zIndex: board.slotCount - index,
     };
   }
@@ -28,26 +33,17 @@ function BoardDisplay({ board, p1Name }) {
     <div className="board-display" style={{ width: "500px" }}>
       {board.cells.map((col, x) =>
         col.map((cell, y) => (
-          <div
-            key={`${x}-${y}`}
-            className="cell"
-            style={{
-              ...getGridCoordinates(y + 1, x + 1),
-              backgroundColor: getCellColor(x, y),
-            }}
-          >
-            {cell.map((player, index) => {
-              if (player) {
-                return (
+          <div key={`${x}-${y}`} className="cell" style={getCellStyle(x, y)}>
+            {cell.map(
+              (player, index) =>
+                player && (
                   <div
                     key={`${x}-${y}-${index}`}
                     className="piece"
                     style={getPieceStyle(player, index)}
-                  ></div>
-                );
-              }
-              return null;
-            })}
+                  />
+                )
+            )}
           </div>
         ))
       )}
