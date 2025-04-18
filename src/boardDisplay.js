@@ -18,14 +18,14 @@ function BoardDisplay({ board, p1Name }) {
 
   return (
     <div className="board-display">
-      {board.cells.map((row, rowIndex) =>
-        row.map((cell, cellIndex) => (
+      {board.cells.map((col, x) =>
+        col.map((cell, y) => (
           <div
-            key={`${rowIndex}-${cellIndex}`}
+            key={`${x}-${y}`}
             className="cell"
             style={{
-              ...getGridCoordinates(rowIndex, cellIndex),
-              backgroundColor: getCellColor(rowIndex, cellIndex),
+              ...getGridCoordinates(y + 1, x + 1),
+              backgroundColor: getCellColor(x, y),
             }}
           >
             {cell}
