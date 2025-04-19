@@ -1,11 +1,11 @@
 import { getCellWinner } from "./engine/board";
 
-const PIECE_SIZE = 15;
+const PIECE_SIZE = 20;
 
 function BoardDisplay({ board, p1Name, p2Name }) {
   const BACKGROUND_COLOR_MAP = {
-    [p1Name]: "lightgreen",
-    [p2Name]: "lightcoral",
+    [p1Name]: "rgba(0, 255, 0, 0.2)",
+    [p2Name]: "rgba(255, 0, 0, 0.2)",
     undefined: "white",
   };
   const PIECE_COLOR_MAP = {

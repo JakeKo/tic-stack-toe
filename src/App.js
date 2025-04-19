@@ -40,7 +40,7 @@ function App() {
     if (playGames) {
       const intervalId = setInterval(() => {
         playGameRecordResults();
-      }, 2000);
+      }, 100);
       return () => clearInterval(intervalId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
