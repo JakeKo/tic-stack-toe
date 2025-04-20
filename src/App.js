@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import GameStats from "./gameStats";
 import { createBoard } from "./engine/board";
-import { playGame } from "./engine/strategy";
+import { autoPlayGame } from "./engine/game";
 import BoardDisplay from "./boardDisplay";
 
 function usePlayerHistory() {
@@ -30,24 +30,24 @@ function App() {
   const [p1History, recordP1GameResult] = usePlayerHistory();
   const [p2History, recordP2GameResult] = usePlayerHistory();
   const [board, setBoard] = useState(createBoard());
-  const [playGames, setPlayGames] = useState(false);
+  const [autoPlay, setAutoPlay] = useState(false);
   const p1Name = "P1";
   const p2Name = "P2";
   const [games, setGames] = useState([]);
   const [gameIndex, setGameIndex] = useState(-1);
 
   useEffect(() => {
-    if (playGames) {
+    if (autoPlay) {
       const intervalId = setInterval(() => {
         playGameRecordResults();
       }, 100);
       return () => clearInterval(intervalId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playGames]);
+  }, [autoPlay]);
 
   function playGameRecordResults() {
-    const game = playGame(p1Name, p2Name);
+    const game = autoPlayGame(p1Name, p2Name);
 
     if (game.winner === p1Name) {
       recordP1GameResult("win", p2Name);
@@ -82,21 +82,23 @@ function App() {
         p2Wins={p2History.wins}
         draws={p1History.draws}
       />
+      <button onClick={() => setAutoPlay(!autoPlay)}>Auto Play Games</button>
       <button
         onClick={() => setGameIndex(gameIndex - 1)}
         disabled={gameIndex <= 0}
       >
-        Previous Game
+        {"<<"}
       </button>
-      <button onClick={playGameRecordResults}>Play Game</button>
-      <button onClick={() => setPlayGames(!playGames)}>Play Games</button>
       <button
         onClick={() => setGameIndex(gameIndex + 1)}
         disabled={gameIndex >= games.length - 1}
       >
-        Next Game
+        {">>"}
       </button>
-      {gameIndex} {games.length}
+      <br />
+      <button onClick={playGameRecordResults}>Start Game</button>
+      <button>{"<<"}</button>
+      <button>{">>"}</button>
       <BoardDisplay board={board} p1Name={p1Name} p2Name={p2Name} />
     </div>
   );
