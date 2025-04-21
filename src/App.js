@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import GameStats from "./gameStats";
 import { createBoard } from "./engine/board";
-import { autoPlayGame } from "./engine/game";
+import { autoPlayGame, createGame } from "./engine/game";
 import BoardDisplay from "./boardDisplay";
 
 function usePlayerHistory() {
@@ -29,6 +29,8 @@ function usePlayerHistory() {
 function App() {
   const [p1History, recordP1GameResult] = usePlayerHistory();
   const [p2History, recordP2GameResult] = usePlayerHistory();
+  const [currentGame, setCurrentGame] = useState();
+  const [commandIndex, setCommandIndex] = useState(-1);
   const [board, setBoard] = useState(createBoard());
   const [autoPlay, setAutoPlay] = useState(false);
   const p1Name = "P1";
@@ -45,6 +47,16 @@ function App() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoPlay]);
+
+  // Set the initial game index to the last game in the games array
+  useEffect(() => {
+    setGameIndex(games.length - 1);
+  }, [games.length]);
+
+  // Update the board when the game index changes
+  useEffect(() => {
+    gameIndex >= 0 && setBoard(games[gameIndex].board);
+  }, [gameIndex, games]);
 
   function playGameRecordResults() {
     const game = autoPlayGame(p1Name, p2Name);
@@ -63,15 +75,44 @@ function App() {
     setGames((games) => [...games, game]);
   }
 
-  useEffect(() => {
-    setGameIndex(games.length - 1);
-  }, [games.length]);
-
-  useEffect(() => {
-    if (gameIndex >= 0) {
-      setBoard(games[gameIndex].board);
+  function nextCommand() {
+    if (!currentGame) {
+      return;
     }
-  }, [gameIndex, games]);
+
+    if (commandIndex < currentGame.boardHistory.length - 1) {
+      const nextIndex = commandIndex + 1;
+      setCommandIndex(nextIndex);
+      setBoard(currentGame.boardHistory[nextIndex]);
+    } else {
+      // TODO: Play the next round
+    }
+  }
+
+  function previousCommand() {
+    if (!currentGame) {
+      return;
+    }
+
+    if (commandIndex > 0) {
+      const prevIndex = commandIndex - 1;
+      setCommandIndex(prevIndex);
+      setBoard(currentGame.boardHistory[prevIndex]);
+    }
+  }
+
+  function toggleGame() {
+    if (currentGame) {
+      setCurrentGame(undefined);
+      setCommandIndex(-1);
+      setBoard(createBoard());
+    } else {
+      const game = createGame();
+      setCurrentGame(game);
+      setCommandIndex(0);
+      setBoard(game.board);
+    }
+  }
 
   return (
     <div className="app">
@@ -96,9 +137,21 @@ function App() {
         {">>"}
       </button>
       <br />
-      <button onClick={playGameRecordResults}>Start Game</button>
-      <button>{"<<"}</button>
-      <button>{">>"}</button>
+      <button onClick={toggleGame}>Start Game</button>
+      <button
+        onClick={previousCommand}
+        disabled={!currentGame || commandIndex <= 0}
+      >
+        {"<<"}
+      </button>
+      <button
+        onClick={nextCommand}
+        disabled={
+          !currentGame || commandIndex >= currentGame.boardHistory.length - 1
+        }
+      >
+        {">>"}
+      </button>
       <BoardDisplay board={board} p1Name={p1Name} p2Name={p2Name} />
     </div>
   );

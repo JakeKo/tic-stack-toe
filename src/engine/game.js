@@ -12,7 +12,8 @@ function autoPlayGame(p1Name = "P1", p2Name = "P2") {
   for (let i = 0; i < MAX_GAME_TURNS; i++) {
     const cmd1 = strategyRandom(p1, game.board.cells);
     game.board.cells = issueCommand(game.board.cells, cmd1);
-    game.commands.push(cmd1);
+    game.boardHistory.push(game.board.cells);
+    game.commandHistory.push(cmd1);
 
     if (!cmd1.pluck) {
       const pieceSize = cmd1.slot[2];
@@ -27,7 +28,8 @@ function autoPlayGame(p1Name = "P1", p2Name = "P2") {
 
     const cmd2 = strategyRandom(p2, game.board.cells);
     game.board.cells = issueCommand(game.board.cells, cmd2);
-    game.commands.push(cmd2);
+    game.boardHistory.push(game.board.cells);
+    game.commandHistory.push(cmd2);
 
     if (!cmd2.pluck) {
       const pieceSize = cmd2.slot[2];
@@ -49,12 +51,12 @@ function createGame() {
 
   return {
     board,
-    boardHistory: [board],
+    boardHistory: [board.cells],
     p1TurnCount: 0,
     p2TurnCount: 0,
     p1PlayedPiecesCount: 0,
     p2PlayedPiecesCount: 0,
-    commands: [],
+    commandHistory: [{ start: true }],
     winner: undefined,
   };
 }
