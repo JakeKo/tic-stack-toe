@@ -26,7 +26,7 @@ function autoPlayNextMove(game) {
   const { activePlayer, board, boardHistory, commandHistory } = game;
   const cmd = activePlayer.getCommand(game);
   board.cells = issueCommand(board.cells, cmd);
-  boardHistory.push(board.cells);
+  boardHistory.push({ ...board });
   commandHistory.push(cmd);
 
   if (!cmd.pluck) {
@@ -51,10 +51,12 @@ function createGame(p1Name = "P1", p2Name = "P2") {
   const p2 = createPlayer(p2Name, strategyRandom);
 
   return {
+    p1,
+    p2,
     activePlayer: p1,
     inactivePlayer: p2,
     board,
-    boardHistory: [board.cells],
+    boardHistory: [{ ...board }],
     commandHistory: [{ start: true }],
     winner: undefined,
   };

@@ -4,6 +4,7 @@ import GameStats from "./gameStats";
 import { createBoard } from "./engine/board";
 import { autoPlayGame, autoPlayNextMove, createGame } from "./engine/game";
 import BoardDisplay from "./boardDisplay";
+import PlayerDisplay from "./playerDisplay";
 
 function usePlayerHistory() {
   const [wins, setWins] = useState(0);
@@ -140,7 +141,7 @@ function App() {
         {">>"}
       </button>
       <br />
-      <button onClick={toggleGame}>Start Game</button>
+      <button onClick={toggleGame}>{currentGame ? "End" : "Start"} Game</button>
       <button
         onClick={previousCommand}
         disabled={!currentGame || commandIndex <= 0}
@@ -149,15 +150,19 @@ function App() {
       </button>
       <button
         onClick={nextCommand}
-        // disabled={
-        //   !currentGame ||
-        //   commandIndex >= currentGame.boardHistory.length - 1 ||
-        //   board?.winner
-        // }
+        disabled={
+          !currentGame ||
+          commandIndex >= currentGame.boardHistory.length ||
+          board?.winner
+        }
       >
         {">>"}
       </button>
-      <BoardDisplay board={board} p1Name={p1Name} p2Name={p2Name} />
+      <div className="game-container">
+        <PlayerDisplay player={currentGame?.p1} />
+        <BoardDisplay board={board} p1Name={p1Name} p2Name={p2Name} />
+        <PlayerDisplay player={currentGame?.p2} />
+      </div>
     </div>
   );
 }
