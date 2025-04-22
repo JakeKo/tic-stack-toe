@@ -23,31 +23,25 @@ function autoPlayNextMove(game) {
     return game;
   }
 
-  const activePlayer = game.activePlayer === game.p1.name ? game.p1 : game.p2;
+  const { activePlayer, board, boardHistory, commandHistory } = game;
   const cmd = activePlayer.getCommand(game);
-  game.board.cells = issueCommand(game.board.cells, cmd);
-  game.boardHistory.push(game.board.cells);
-  game.commandHistory.push(cmd);
+  board.cells = issueCommand(board.cells, cmd);
+  boardHistory.push(board.cells);
+  commandHistory.push(cmd);
 
   if (!cmd.pluck) {
     const pieceSize = cmd.slot[2];
     activePlayer.inventory[pieceSize]--;
-    if (activePlayer.name === game.p1.name) {
-      game.p1PlayedPiecesCount++;
-    } else {
-      game.p2PlayedPiecesCount++;
-    }
+    activePlayer.playedPiecesCount++;
   }
 
-  if (activePlayer.name === game.p1.name) {
-    game.p1TurnCount++;
-    game.activePlayer = game.p2.name;
-  } else {
-    game.p2TurnCount++;
-    game.activePlayer = game.p1.name;
-  }
-
+  activePlayer.turnCount++;
   game.winner = checkForWinner(game.board.cells);
+
+  const swapper = game.activePlayer;
+  game.activePlayer = game.inactivePlayer;
+  game.inactivePlayer = swapper;
+
   return game;
 }
 
@@ -57,15 +51,10 @@ function createGame(p1Name = "P1", p2Name = "P2") {
   const p2 = createPlayer(p2Name, strategyRandom);
 
   return {
-    p1,
-    p2,
-    activePlayer: p1Name,
+    activePlayer: p1,
+    inactivePlayer: p2,
     board,
     boardHistory: [board.cells],
-    p1TurnCount: 0,
-    p2TurnCount: 0,
-    p1PlayedPiecesCount: 0,
-    p2PlayedPiecesCount: 0,
     commandHistory: [{ start: true }],
     winner: undefined,
   };
