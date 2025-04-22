@@ -5,40 +5,12 @@ import { strategyRandom } from "./strategy";
 const MAX_GAME_TURNS = 100;
 
 function autoPlayGame(p1Name = "P1", p2Name = "P2") {
-  const game = createGame();
-  const p1 = createPlayer(p1Name);
-  const p2 = createPlayer(p2Name);
+  const game = createGame(p1Name, p2Name);
 
   for (let i = 0; i < MAX_GAME_TURNS; i++) {
-    const cmd1 = strategyRandom(p1, game.board.cells);
-    game.board.cells = issueCommand(game.board.cells, cmd1);
-    game.boardHistory.push(game.board.cells);
-    game.commandHistory.push(cmd1);
+    autoPlayNextMove(game);
 
-    if (!cmd1.pluck) {
-      const pieceSize = cmd1.slot[2];
-      p1.inventory[pieceSize]--;
-      game.p1PlayedPiecesCount++;
-    }
-
-    game.p1TurnCount++;
-    if ((game.winner = checkForWinner(game.board.cells))) {
-      break;
-    }
-
-    const cmd2 = strategyRandom(p2, game.board.cells);
-    game.board.cells = issueCommand(game.board.cells, cmd2);
-    game.boardHistory.push(game.board.cells);
-    game.commandHistory.push(cmd2);
-
-    if (!cmd2.pluck) {
-      const pieceSize = cmd2.slot[2];
-      p2.inventory[pieceSize]--;
-      game.p2PlayedPiecesCount++;
-    }
-
-    game.p2TurnCount++;
-    if ((game.winner = checkForWinner(game.board.cells))) {
+    if (game.winner) {
       break;
     }
   }
@@ -52,7 +24,7 @@ function autoPlayNextMove(game) {
   }
 
   const activePlayer = game.activePlayer === game.p1.name ? game.p1 : game.p2;
-  const cmd = strategyRandom(activePlayer, game.board.cells);
+  const cmd = activePlayer.getCommand(game);
   game.board.cells = issueCommand(game.board.cells, cmd);
   game.boardHistory.push(game.board.cells);
   game.commandHistory.push(cmd);
@@ -81,8 +53,8 @@ function autoPlayNextMove(game) {
 
 function createGame(p1Name = "P1", p2Name = "P2") {
   const board = createBoard();
-  const p1 = createPlayer(p1Name);
-  const p2 = createPlayer(p2Name);
+  const p1 = createPlayer(p1Name, strategyRandom);
+  const p2 = createPlayer(p2Name, strategyRandom);
 
   return {
     p1,

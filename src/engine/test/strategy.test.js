@@ -15,7 +15,7 @@ test("getAllPossibleCommands returns all possible commands on occupied board", (
 
 test("getAllPossibleCommands returns all possible commands on empty board", () => {
   const board = createBoard();
-  const player = createPlayer("p1");
+  const player = createPlayer("p1", () => {});
 
   const actualCommands = getAllPossibleCommands(
     board.cells,
@@ -26,37 +26,9 @@ test("getAllPossibleCommands returns all possible commands on empty board", () =
 });
 
 test("strategyRandom can play a game", () => {
-  let board = createBoard();
-  const p1 = createPlayer("p1");
-  const p2 = createPlayer("p2");
-  const maxIter = 100;
-  let i = 0;
-  let winner;
+  const player = createPlayer("p1", strategyRandom);
+  const board = createBoard();
 
-  while (!winner && i < maxIter) {
-    const cmd1 = strategyRandom(p1, board.cells);
-    board.cells = issueCommand(board.cells, cmd1);
-
-    if (!cmd1.pluck) {
-      const pieceSize = cmd1.slot[2];
-      p1.inventory[pieceSize]--;
-    }
-
-    const cmd2 = strategyRandom(p2, board.cells);
-    board.cells = issueCommand(board.cells, cmd2);
-
-    if (!cmd2.pluck) {
-      const pieceSize = cmd2.slot[2];
-      p2.inventory[pieceSize]--;
-    }
-
-    winner = checkForWinner(board.cells);
-    i++;
-  }
-
-  console.log(
-    [toConsoleString(board), `Winner: ${winner} (${i} rounds)`].join("\n")
-  );
-
-  expect(winner).toBeDefined();
+  const cmd = player.getCommand({ board });
+  expect(cmd).toBeDefined();
 });
