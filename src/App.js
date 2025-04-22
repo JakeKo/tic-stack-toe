@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import GameStats from "./gameStats";
 import { createBoard } from "./engine/board";
-import { autoPlayGame, createGame } from "./engine/game";
+import { autoPlayGame, autoPlayNextMove, createGame } from "./engine/game";
 import BoardDisplay from "./boardDisplay";
 
 function usePlayerHistory() {
@@ -85,7 +85,10 @@ function App() {
       setCommandIndex(nextIndex);
       setBoard(currentGame.boardHistory[nextIndex]);
     } else {
-      // TODO: Play the next round
+      const newGame = autoPlayNextMove(currentGame);
+      setCurrentGame(newGame);
+      setCommandIndex(newGame.boardHistory.length - 1);
+      setBoard(newGame.board);
     }
   }
 
@@ -107,7 +110,7 @@ function App() {
       setCommandIndex(-1);
       setBoard(createBoard());
     } else {
-      const game = createGame();
+      const game = createGame(p1Name, p2Name);
       setCurrentGame(game);
       setCommandIndex(0);
       setBoard(game.board);
@@ -146,9 +149,11 @@ function App() {
       </button>
       <button
         onClick={nextCommand}
-        disabled={
-          !currentGame || commandIndex >= currentGame.boardHistory.length - 1
-        }
+        // disabled={
+        //   !currentGame ||
+        //   commandIndex >= currentGame.boardHistory.length - 1 ||
+        //   board?.winner
+        // }
       >
         {">>"}
       </button>

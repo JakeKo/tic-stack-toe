@@ -46,10 +46,48 @@ function autoPlayGame(p1Name = "P1", p2Name = "P2") {
   return game;
 }
 
-function createGame() {
+function autoPlayNextMove(game) {
+  if (!game || game.winner) {
+    return game;
+  }
+
+  const activePlayer = game.activePlayer === game.p1.name ? game.p1 : game.p2;
+  const cmd = strategyRandom(activePlayer, game.board.cells);
+  game.board.cells = issueCommand(game.board.cells, cmd);
+  game.boardHistory.push(game.board.cells);
+  game.commandHistory.push(cmd);
+
+  if (!cmd.pluck) {
+    const pieceSize = cmd.slot[2];
+    activePlayer.inventory[pieceSize]--;
+    if (activePlayer.name === game.p1.name) {
+      game.p1PlayedPiecesCount++;
+    } else {
+      game.p2PlayedPiecesCount++;
+    }
+  }
+
+  if (activePlayer.name === game.p1.name) {
+    game.p1TurnCount++;
+    game.activePlayer = game.p2.name;
+  } else {
+    game.p2TurnCount++;
+    game.activePlayer = game.p1.name;
+  }
+
+  game.winner = checkForWinner(game.board.cells);
+  return game;
+}
+
+function createGame(p1Name = "P1", p2Name = "P2") {
   const board = createBoard();
+  const p1 = createPlayer(p1Name);
+  const p2 = createPlayer(p2Name);
 
   return {
+    p1,
+    p2,
+    activePlayer: p1Name,
     board,
     boardHistory: [board.cells],
     p1TurnCount: 0,
@@ -61,4 +99,4 @@ function createGame() {
   };
 }
 
-export { createGame, autoPlayGame };
+export { createGame, autoPlayGame, autoPlayNextMove };
