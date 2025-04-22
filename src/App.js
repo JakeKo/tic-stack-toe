@@ -6,6 +6,8 @@ import { autoPlayGame, autoPlayNextMove, createGame } from "./engine/game";
 import BoardDisplay from "./boardDisplay";
 import PlayerDisplay from "./playerDisplay";
 
+const AUTO_PLAY_INTERVAL = 100;
+
 function usePlayerHistory() {
   const [wins, setWins] = useState(0);
   const [draws, setDraws] = useState(0);
@@ -42,38 +44,47 @@ function App() {
   useEffect(() => {
     if (autoPlay) {
       const intervalId = setInterval(() => {
-        playGameRecordResults();
-      }, 100);
+        const game = autoPlayGame(p1Name, p2Name);
+
+        if (game.winner === p1Name) {
+          recordP1GameResult("win", p2Name);
+          recordP2GameResult("loss", p1Name);
+        } else if (game.winner === p2Name) {
+          recordP1GameResult("loss", p2Name);
+          recordP2GameResult("win", p1Name);
+        } else {
+          recordP1GameResult("draw", p2Name);
+          recordP2GameResult("draw", p1Name);
+        }
+
+        setCurrentGame(game);
+        setGameIndex(games.length);
+        setCommandIndex(game.boardHistory.length - 1);
+        setBoard(game.board);
+        setGames((games) => [...games, game]);
+      }, AUTO_PLAY_INTERVAL);
+
       return () => clearInterval(intervalId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoPlay]);
 
-  // Set the initial game index to the last game in the games array
-  useEffect(() => {
-    setGameIndex(games.length - 1);
-  }, [games.length]);
-
-  // Update the board when the game index changes
-  useEffect(() => {
-    gameIndex >= 0 && setBoard(games[gameIndex].board);
-  }, [gameIndex, games]);
-
-  function playGameRecordResults() {
-    const game = autoPlayGame(p1Name, p2Name);
-
-    if (game.winner === p1Name) {
-      recordP1GameResult("win", p2Name);
-      recordP2GameResult("loss", p1Name);
-    } else if (game.winner === p2Name) {
-      recordP1GameResult("loss", p2Name);
-      recordP2GameResult("win", p1Name);
-    } else {
-      recordP1GameResult("draw", p2Name);
-      recordP2GameResult("draw", p1Name);
+  function nextGame() {
+    if (gameIndex < games.length - 1) {
+      const nextGame = games[gameIndex + 1];
+      setCurrentGame(nextGame);
+      setCommandIndex(nextGame.boardHistory.length - 1);
+      setBoard(nextGame.board);
     }
+  }
 
-    setGames((games) => [...games, game]);
+  function previousGame() {
+    if (gameIndex > 0) {
+      const prevGame = games[gameIndex - 1];
+      setCurrentGame(prevGame);
+      setCommandIndex(prevGame.boardHistory.length - 1);
+      setBoard(prevGame.board);
+    }
   }
 
   function nextCommand() {
@@ -81,10 +92,13 @@ function App() {
       return;
     }
 
+    // If we are at the end of the command history, we need to auto-play the next move
+    // and update the command index to the new end of the history
     if (commandIndex < currentGame.boardHistory.length - 1) {
       const nextIndex = commandIndex + 1;
       setCommandIndex(nextIndex);
       setBoard(currentGame.boardHistory[nextIndex]);
+      // TODO: Track and update player inventories
     } else {
       const newGame = autoPlayNextMove(currentGame);
       setCurrentGame(newGame);
@@ -102,6 +116,7 @@ function App() {
       const prevIndex = commandIndex - 1;
       setCommandIndex(prevIndex);
       setBoard(currentGame.boardHistory[prevIndex]);
+      // TODO: Track and update player inventories
     }
   }
 
@@ -127,17 +142,13 @@ function App() {
         p2Wins={p2History.wins}
         draws={p1History.draws}
       />
-      <button onClick={() => setAutoPlay(!autoPlay)}>Auto Play Games</button>
-      <button
-        onClick={() => setGameIndex(gameIndex - 1)}
-        disabled={gameIndex <= 0}
-      >
+      <button onClick={() => setAutoPlay(!autoPlay)}>
+        {autoPlay ? "Stop Auto Play" : "Auto Play Games"}
+      </button>
+      <button onClick={previousGame} disabled={gameIndex <= 0}>
         {"<<"}
       </button>
-      <button
-        onClick={() => setGameIndex(gameIndex + 1)}
-        disabled={gameIndex >= games.length - 1}
-      >
+      <button onClick={nextGame} disabled={gameIndex >= games.length - 1}>
         {">>"}
       </button>
       <br />
