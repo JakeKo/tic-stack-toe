@@ -159,9 +159,9 @@ function App() {
         {">>"}
       </button>
       <div className="game-container">
-        <PlayerDisplay player={currentGame?.p1} />
+        {currentGame && <PlayerDisplay player={currentGame.p1} />}
         <BoardDisplay board={board} p1Name={p1Name} p2Name={p2Name} />
-        <PlayerDisplay player={currentGame?.p2} />
+        {currentGame && <PlayerDisplay player={currentGame.p2} />}
       </div>
     </div>
   );
