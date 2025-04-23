@@ -85,3 +85,11 @@
   place-items: center;
   gap: 8px;
 }
+
+.piece-shadow {
+  aspect-ratio: 1;
+  grid-area: 1 / 1 / 2 / 2;
+  border-radius: 50%;
+  box-sizing: border-box;
+  background-color: lightgrey;
+}

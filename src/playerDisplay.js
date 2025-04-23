@@ -1,14 +1,24 @@
 const PIECE_SIZE = 20;
 
+function nArray(n) {
+  return Array.from({ length: n }, (_, i) => i);
+}
+
 function PlayerDisplay({ player, isP1 }) {
   function getInventoryStyle() {
     const widestPiece = player.numSizes * PIECE_SIZE * 2;
     return {
       gridTemplateColumns: `repeat(${player.numPiecesPerSize}, ${widestPiece}px)`,
-      gridTemplateRows: Array.from(
-        { length: player.numSizes },
-        (_, i) => `${PIECE_SIZE * 2 * (i + 1)}px`
-      ).join(" "),
+      gridTemplateRows: nArray(player.numSizes)
+        .map((i) => `${PIECE_SIZE * 2 * (i + 1)}px`)
+        .join(" "),
+    };
+  }
+
+  function getPieceShadowStyle(row, col) {
+    return {
+      gridArea: `${row + 1} / ${col + 1} / span 1 / span 1`,
+      width: `${(row + 1) * PIECE_SIZE * 2}px`,
     };
   }
 
@@ -24,8 +34,17 @@ function PlayerDisplay({ player, isP1 }) {
     <div className="player-display">
       <h1>{player.name}</h1>
       <div className="player-inventory" style={getInventoryStyle()}>
+        {nArray(player.numSizes).map((row) =>
+          nArray(player.numPiecesPerSize).map((col) => (
+            <div
+              key={`${row}-${col}`}
+              className="piece-shadow"
+              style={getPieceShadowStyle(row, col)}
+            />
+          ))
+        )}
         {player.inventory.map((count, size) =>
-          Array.from({ length: count }, (_, i) => (
+          nArray(count).map((i) => (
             <div
               key={`${size}-${i}`}
               className="piece"
