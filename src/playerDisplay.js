@@ -1,28 +1,38 @@
 const PIECE_SIZE = 20;
 
-function PlayerDisplay({ player }) {
-  function getPieceStyle(index) {
+function PlayerDisplay({ player, isP1 }) {
+  function getInventoryStyle() {
+    const widestPiece = player.numSizes * PIECE_SIZE * 2;
     return {
-      border: `${PIECE_SIZE}px solid grey`,
-      width: `${(index + 1) * PIECE_SIZE * 2}px`,
+      gridTemplateColumns: `repeat(${player.numPiecesPerSize}, ${widestPiece}px)`,
+      gridTemplateRows: Array.from(
+        { length: player.numSizes },
+        (_, i) => `${PIECE_SIZE * 2 * (i + 1)}px`
+      ).join(" "),
+    };
+  }
+
+  function getPieceStyle(row, col) {
+    return {
+      border: `${PIECE_SIZE}px solid ${isP1 ? "green" : "red"}`,
+      width: `${(row + 1) * PIECE_SIZE * 2}px`,
+      gridArea: `${row + 1} / ${col + 1} / span 1 / span 1`,
     };
   }
 
   return (
     <div className="player-display">
-      <div className="player-name">{player.name}</div>
-      <div className="player-inventory">
-        {player.inventory.map((count, size) => (
-          <div key={size} className="player-inventory-row">
-            {Array.from({ length: count }, (_, i) => (
-              <div
-                key={`${size}-${i}`}
-                className="piece"
-                style={getPieceStyle(size)}
-              />
-            ))}
-          </div>
-        ))}
+      <h1>{player.name}</h1>
+      <div className="player-inventory" style={getInventoryStyle()}>
+        {player.inventory.map((count, size) =>
+          Array.from({ length: count }, (_, i) => (
+            <div
+              key={`${size}-${i}`}
+              className="piece"
+              style={getPieceStyle(size, i)}
+            />
+          ))
+        )}
       </div>
     </div>
   );

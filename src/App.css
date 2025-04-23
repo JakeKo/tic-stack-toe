@@ -74,13 +74,14 @@
   gap: 12px;
 }
 
-.player-inventory {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.player-display {
+  background-color: #f0f0f0;
+  border-radius: 12px;
+  padding: 12px;
 }
 
-.player-inventory-row {
-  display: flex;
-  gap: 12px;
+.player-inventory {
+  display: grid;
+  place-items: center;
+  gap: 8px;
 }
