@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import GameStats from "./gameStats";
-import { createBoard } from "./engine/board";
 import { autoPlayGame, autoPlayNextMove, createGame } from "./engine/game";
 import BoardDisplay from "./boardDisplay";
 import PlayerDisplay from "./playerDisplay";
@@ -29,12 +28,19 @@ function usePlayerHistory() {
   return [{ wins, losses, draws }, recordGameResult, history];
 }
 
+// Update gameIndex and reset commandIndex with Prev/Next Game buttons
+// Update commandIndex with Prev/Next Command buttons
+// Update gameIndex, commandIndex, and games with Start Game button
+// Update gameIndex and games with Auto Play Games button
+
+// Update currentGame when gameIndex or commandIndex changes
+// Update board and player displays when currentGame changes
+
 function App() {
   const [p1History, recordP1GameResult] = usePlayerHistory();
   const [p2History, recordP2GameResult] = usePlayerHistory();
   const [currentGame, setCurrentGame] = useState();
   const [commandIndex, setCommandIndex] = useState(-1);
-  const [board, setBoard] = useState(createBoard());
   const [autoPlay, setAutoPlay] = useState(false);
   const p1Name = "P1";
   const p2Name = "P2";
@@ -60,7 +66,6 @@ function App() {
         setCurrentGame(game);
         setGameIndex(games.length);
         setCommandIndex(game.boardHistory.length - 1);
-        setBoard(game.board);
         setGames((games) => [...games, game]);
       }, AUTO_PLAY_INTERVAL);
 
@@ -74,7 +79,6 @@ function App() {
       const nextGame = games[gameIndex + 1];
       setCurrentGame(nextGame);
       setCommandIndex(nextGame.boardHistory.length - 1);
-      setBoard(nextGame.board);
     }
   }
 
@@ -83,7 +87,6 @@ function App() {
       const prevGame = games[gameIndex - 1];
       setCurrentGame(prevGame);
       setCommandIndex(prevGame.boardHistory.length - 1);
-      setBoard(prevGame.board);
     }
   }
 
@@ -97,13 +100,11 @@ function App() {
     if (commandIndex < currentGame.boardHistory.length - 1) {
       const nextIndex = commandIndex + 1;
       setCommandIndex(nextIndex);
-      setBoard(currentGame.boardHistory[nextIndex]);
       // TODO: Track and update player inventories
     } else {
       const newGame = autoPlayNextMove(currentGame);
       setCurrentGame(newGame);
       setCommandIndex(newGame.boardHistory.length - 1);
-      setBoard(newGame.board);
     }
   }
 
@@ -112,10 +113,9 @@ function App() {
       return;
     }
 
-    if (commandIndex > 0) {
+    if (currentGame && commandIndex > 0) {
       const prevIndex = commandIndex - 1;
       setCommandIndex(prevIndex);
-      setBoard(currentGame.boardHistory[prevIndex]);
       // TODO: Track and update player inventories
     }
   }
@@ -124,12 +124,10 @@ function App() {
     if (currentGame) {
       setCurrentGame(undefined);
       setCommandIndex(-1);
-      setBoard(createBoard());
     } else {
       const game = createGame(p1Name, p2Name);
       setCurrentGame(game);
       setCommandIndex(0);
-      setBoard(game.board);
     }
   }
 
@@ -162,18 +160,22 @@ function App() {
       <button
         onClick={nextCommand}
         disabled={
-          !currentGame ||
-          commandIndex >= currentGame.boardHistory.length ||
-          board?.winner
+          !currentGame || commandIndex >= currentGame.boardHistory.length
         }
       >
         {">>"}
       </button>
-      <div className="game-container">
-        {currentGame && <PlayerDisplay player={currentGame.p1} isP1 />}
-        <BoardDisplay board={board} p1Name={p1Name} p2Name={p2Name} />
-        {currentGame && <PlayerDisplay player={currentGame.p2} />}
-      </div>
+      {currentGame && (
+        <div className="game-container">
+          <PlayerDisplay player={currentGame.p1} isP1 />
+          <BoardDisplay
+            board={currentGame.board}
+            p1Name={currentGame.p1.name}
+            p2Name={currentGame.p2.name}
+          />
+          <PlayerDisplay player={currentGame.p2} />
+        </div>
+      )}
     </div>
   );
 }
