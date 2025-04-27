@@ -28,19 +28,19 @@ function usePlayerHistory() {
   return [{ wins, losses, draws }, recordGameResult, history];
 }
 
-// Update gameIndex and reset commandIndex with Prev/Next Game buttons
-// Update commandIndex with Prev/Next Command buttons
-// Update gameIndex, commandIndex, and games with Start Game button
+// Update gameIndex and reset snapshotIndex with Prev/Next Game buttons
+// Update snapshotIndex with Prev/Next Command buttons
+// Update gameIndex, snapshotIndex, and games with Start Game button
 // Update gameIndex and games with Auto Play Games button
 
-// Update currentGame when gameIndex or commandIndex changes
+// Update currentGame when gameIndex or snapshotIndex changes
 // Update board and player displays when currentGame changes
 
 function App() {
   const [p1History, recordP1GameResult] = usePlayerHistory();
   const [p2History, recordP2GameResult] = usePlayerHistory();
   const [currentGame, setCurrentGame] = useState();
-  const [commandIndex, setCommandIndex] = useState(-1);
+  const [snapshotIndex, setSnapshotIndex] = useState(-1);
   const [autoPlay, setAutoPlay] = useState(false);
   const p1Name = "P1";
   const p2Name = "P2";
@@ -65,7 +65,7 @@ function App() {
 
         setCurrentGame(game);
         setGameIndex(games.length);
-        setCommandIndex(game.turnCount - 1);
+        setSnapshotIndex(game.turnCount - 1);
         setGames((games) => [...games, game]);
       }, AUTO_PLAY_INTERVAL);
 
@@ -78,7 +78,8 @@ function App() {
     if (gameIndex < games.length - 1) {
       const nextGame = games[gameIndex + 1];
       setCurrentGame(nextGame);
-      setCommandIndex(nextGame.turnCount - 1);
+      setGameIndex(gameIndex + 1);
+      setSnapshotIndex(nextGame.turnCount - 1);
     }
   }
 
@@ -86,7 +87,8 @@ function App() {
     if (gameIndex > 0) {
       const prevGame = games[gameIndex - 1];
       setCurrentGame(prevGame);
-      setCommandIndex(prevGame.turnCount - 1);
+      setGameIndex(gameIndex - 1);
+      setSnapshotIndex(prevGame.turnCount - 1);
     }
   }
 
@@ -97,37 +99,35 @@ function App() {
 
     // If we are at the end of the command history, we need to auto-play the next move
     // and update the command index to the new end of the history
-    if (commandIndex < currentGame.turnCount - 1) {
-      const nextIndex = commandIndex + 1;
-      setCommandIndex(nextIndex);
+    if (snapshotIndex < currentGame.turnCount - 1) {
+      const nextIndex = snapshotIndex + 1;
+      setSnapshotIndex(nextIndex);
       // TODO: Track and update player inventories
     } else {
       const newGame = autoPlayNextMove(currentGame);
       setCurrentGame(newGame);
-      setCommandIndex(newGame.turnCount - 1);
+      setSnapshotIndex(newGame.turnCount - 1);
     }
   }
 
   function previousCommand() {
-    if (!currentGame) {
-      return;
-    }
-
-    if (currentGame && commandIndex > 0) {
-      const prevIndex = commandIndex - 1;
-      setCommandIndex(prevIndex);
+    if (currentGame && snapshotIndex > 0) {
+      setSnapshotIndex(snapshotIndex - 1);
       // TODO: Track and update player inventories
     }
   }
 
   function toggleGame() {
-    if (currentGame) {
-      setCurrentGame(undefined);
-      setCommandIndex(-1);
+    if (currentGame && !currentGame.board.winner) {
+      const prevGame = games[gameIndex - 1];
+      setGameIndex(gameIndex - 1);
+      setSnapshotIndex(prevGame.turnCount - 1);
+      setGames((games) => void games.pop());
     } else {
       const game = createGame(p1Name, p2Name);
-      setCurrentGame(game);
-      setCommandIndex(0);
+      setGameIndex(games.length);
+      setSnapshotIndex(0);
+      setGames((games) => [...games, game]);
     }
   }
 
@@ -149,17 +149,15 @@ function App() {
       <button onClick={nextGame} disabled={gameIndex >= games.length - 1}>
         {">>"}
       </button>
+      {gameIndex} / {games.length} ({snapshotIndex})
       <br />
       <button onClick={toggleGame}>{currentGame ? "End" : "Start"} Game</button>
-      <button
-        onClick={previousCommand}
-        disabled={!currentGame || commandIndex <= 0}
-      >
+      <button onClick={previousCommand} disabled={snapshotIndex <= 0}>
         {"<<"}
       </button>
       <button
         onClick={nextCommand}
-        disabled={!currentGame || commandIndex >= currentGame.turnCount}
+        disabled={snapshotIndex >= currentGame?.turnCount - 1}
       >
         {">>"}
       </button>
