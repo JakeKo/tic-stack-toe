@@ -19,15 +19,15 @@ function autoPlayGame(p1Name = "P1", p2Name = "P2") {
 }
 
 function makeGameSnapshot(game, command) {
-  const p1 = { ...game.p1 };
-  const p2 = { ...game.p2 };
+  const p1 = JSON.parse(JSON.stringify(game.p1));
+  const p2 = JSON.parse(JSON.stringify(game.p2));
 
   return {
     p1,
     p2,
     activePlayer: game.activePlayer.name === p1.name ? p1 : p2,
     inactivePlayer: game.inactivePlayer.name === p1 ? p1 : p2,
-    board: game.board,
+    board: JSON.parse(JSON.stringify(game.board)),
     command,
   };
 }

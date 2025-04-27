@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import GameStats from "./gameStats";
-import { autoPlayGame, autoPlayNextMove, createGame } from "./engine/game";
+import { autoPlayGame, autoPlayNextMove } from "./engine/game";
 import BoardDisplay from "./boardDisplay";
 import PlayerDisplay from "./playerDisplay";
 
@@ -28,24 +28,35 @@ function usePlayerHistory() {
   return [{ wins, losses, draws }, recordGameResult, history];
 }
 
-// Update gameIndex and reset snapshotIndex with Prev/Next Game buttons
-// Update snapshotIndex with Prev/Next Command buttons
-// Update gameIndex, snapshotIndex, and games with Start Game button
-// Update gameIndex and games with Auto Play Games button
-
-// Update currentGame when gameIndex or snapshotIndex changes
-// Update board and player displays when currentGame changes
-
 function App() {
   const [p1History, recordP1GameResult] = usePlayerHistory();
   const [p2History, recordP2GameResult] = usePlayerHistory();
   const [currentGame, setCurrentGame] = useState();
+  const [currentSnapshot, setCurrentSnapshot] = useState();
   const [snapshotIndex, setSnapshotIndex] = useState(-1);
   const [autoPlay, setAutoPlay] = useState(false);
   const p1Name = "P1";
   const p2Name = "P2";
   const [games, setGames] = useState([]);
   const [gameIndex, setGameIndex] = useState(-1);
+
+  useEffect(() => {
+    setGameIndex(games.length - 1);
+  }, [games.length]);
+
+  useEffect(() => {
+    if (gameIndex >= 0 && gameIndex < games.length) {
+      setCurrentGame(games[gameIndex]);
+    }
+  }, [games, gameIndex]);
+
+  useEffect(() => {
+    if (!currentGame) {
+      setCurrentSnapshot();
+    } else if (snapshotIndex >= 0 && snapshotIndex < currentGame.turnCount) {
+      setCurrentSnapshot(currentGame.snapshots[snapshotIndex]);
+    }
+  }, [snapshotIndex, currentGame]);
 
   useEffect(() => {
     if (autoPlay) {
@@ -63,8 +74,6 @@ function App() {
           recordP2GameResult("draw", p1Name);
         }
 
-        setCurrentGame(game);
-        setGameIndex(games.length);
         setSnapshotIndex(game.turnCount - 1);
         setGames((games) => [...games, game]);
       }, AUTO_PLAY_INTERVAL);
@@ -77,7 +86,6 @@ function App() {
   function nextGame() {
     if (gameIndex < games.length - 1) {
       const nextGame = games[gameIndex + 1];
-      setCurrentGame(nextGame);
       setGameIndex(gameIndex + 1);
       setSnapshotIndex(nextGame.turnCount - 1);
     }
@@ -86,48 +94,23 @@ function App() {
   function previousGame() {
     if (gameIndex > 0) {
       const prevGame = games[gameIndex - 1];
-      setCurrentGame(prevGame);
       setGameIndex(gameIndex - 1);
       setSnapshotIndex(prevGame.turnCount - 1);
     }
   }
 
-  function nextCommand() {
-    if (!currentGame) {
-      return;
-    }
-
-    // If we are at the end of the command history, we need to auto-play the next move
-    // and update the command index to the new end of the history
+  function nextSnapshot() {
     if (snapshotIndex < currentGame.turnCount - 1) {
-      const nextIndex = snapshotIndex + 1;
-      setSnapshotIndex(nextIndex);
-      // TODO: Track and update player inventories
+      setSnapshotIndex(snapshotIndex + 1);
     } else {
       const newGame = autoPlayNextMove(currentGame);
-      setCurrentGame(newGame);
       setSnapshotIndex(newGame.turnCount - 1);
     }
   }
 
-  function previousCommand() {
-    if (currentGame && snapshotIndex > 0) {
+  function previousSnapshot() {
+    if (snapshotIndex > 0) {
       setSnapshotIndex(snapshotIndex - 1);
-      // TODO: Track and update player inventories
-    }
-  }
-
-  function toggleGame() {
-    if (currentGame && !currentGame.board.winner) {
-      const prevGame = games[gameIndex - 1];
-      setGameIndex(gameIndex - 1);
-      setSnapshotIndex(prevGame.turnCount - 1);
-      setGames((games) => void games.pop());
-    } else {
-      const game = createGame(p1Name, p2Name);
-      setGameIndex(games.length);
-      setSnapshotIndex(0);
-      setGames((games) => [...games, game]);
     }
   }
 
@@ -151,25 +134,24 @@ function App() {
       </button>
       {gameIndex} / {games.length} ({snapshotIndex})
       <br />
-      <button onClick={toggleGame}>{currentGame ? "End" : "Start"} Game</button>
-      <button onClick={previousCommand} disabled={snapshotIndex <= 0}>
+      <button onClick={previousSnapshot} disabled={snapshotIndex <= 0}>
         {"<<"}
       </button>
       <button
-        onClick={nextCommand}
+        onClick={nextSnapshot}
         disabled={snapshotIndex >= currentGame?.turnCount - 1}
       >
         {">>"}
       </button>
-      {currentGame && (
+      {currentSnapshot && (
         <div className="game-container">
-          <PlayerDisplay player={currentGame.p1} isP1 />
+          <PlayerDisplay player={currentSnapshot.p1} isP1 />
           <BoardDisplay
-            board={currentGame.board}
-            p1Name={currentGame.p1.name}
-            p2Name={currentGame.p2.name}
+            board={currentSnapshot.board}
+            p1Name={currentSnapshot.p1.name}
+            p2Name={currentSnapshot.p2.name}
           />
-          <PlayerDisplay player={currentGame.p2} />
+          <PlayerDisplay player={currentSnapshot.p2} />
         </div>
       )}
     </div>
