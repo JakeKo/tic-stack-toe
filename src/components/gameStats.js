@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import "./App.css";
 
 function roundDecimal(num, digits = 3) {
   const multiple = Math.pow(10, digits);

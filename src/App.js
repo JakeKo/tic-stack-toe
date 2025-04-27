@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import GameStats from "./gameStats";
+import GameStats from "./components/gameStats";
 import { autoPlayGame, autoPlayNextMove } from "./engine/game";
-import BoardDisplay from "./boardDisplay";
-import PlayerDisplay from "./playerDisplay";
+import BoardDisplay from "./components/boardDisplay";
+import PlayerDisplay from "./components/playerDisplay";
 
 const AUTO_PLAY_INTERVAL = 100;
 

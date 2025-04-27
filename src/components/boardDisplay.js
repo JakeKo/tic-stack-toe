@@ -1,4 +1,4 @@
-import { getCellWinner } from "./engine/board";
+import { getCellWinner } from "../engine/board";
 
 const PIECE_SIZE = 20;
 
