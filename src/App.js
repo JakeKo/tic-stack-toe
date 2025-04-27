@@ -65,7 +65,7 @@ function App() {
 
         setCurrentGame(game);
         setGameIndex(games.length);
-        setCommandIndex(game.boardHistory.length - 1);
+        setCommandIndex(game.turnCount - 1);
         setGames((games) => [...games, game]);
       }, AUTO_PLAY_INTERVAL);
 
@@ -78,7 +78,7 @@ function App() {
     if (gameIndex < games.length - 1) {
       const nextGame = games[gameIndex + 1];
       setCurrentGame(nextGame);
-      setCommandIndex(nextGame.boardHistory.length - 1);
+      setCommandIndex(nextGame.turnCount - 1);
     }
   }
 
@@ -86,7 +86,7 @@ function App() {
     if (gameIndex > 0) {
       const prevGame = games[gameIndex - 1];
       setCurrentGame(prevGame);
-      setCommandIndex(prevGame.boardHistory.length - 1);
+      setCommandIndex(prevGame.turnCount - 1);
     }
   }
 
@@ -97,14 +97,14 @@ function App() {
 
     // If we are at the end of the command history, we need to auto-play the next move
     // and update the command index to the new end of the history
-    if (commandIndex < currentGame.boardHistory.length - 1) {
+    if (commandIndex < currentGame.turnCount - 1) {
       const nextIndex = commandIndex + 1;
       setCommandIndex(nextIndex);
       // TODO: Track and update player inventories
     } else {
       const newGame = autoPlayNextMove(currentGame);
       setCurrentGame(newGame);
-      setCommandIndex(newGame.boardHistory.length - 1);
+      setCommandIndex(newGame.turnCount - 1);
     }
   }
 
@@ -159,9 +159,7 @@ function App() {
       </button>
       <button
         onClick={nextCommand}
-        disabled={
-          !currentGame || commandIndex >= currentGame.boardHistory.length
-        }
+        disabled={!currentGame || commandIndex >= currentGame.turnCount}
       >
         {">>"}
       </button>

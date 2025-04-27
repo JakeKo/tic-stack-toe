@@ -18,16 +18,28 @@ function autoPlayGame(p1Name = "P1", p2Name = "P2") {
   return game;
 }
 
+function makeGameSnapshot(game, command) {
+  const p1 = { ...game.p1 };
+  const p2 = { ...game.p2 };
+
+  return {
+    p1,
+    p2,
+    activePlayer: game.activePlayer.name === p1.name ? p1 : p2,
+    inactivePlayer: game.inactivePlayer.name === p1 ? p1 : p2,
+    board: game.board,
+    command,
+  };
+}
+
 function autoPlayNextMove(game) {
   if (!game || game.winner) {
     return game;
   }
 
-  const { activePlayer, board, boardHistory, commandHistory } = game;
+  const { activePlayer, board } = game;
   const cmd = activePlayer.getCommand(game);
   board.cells = issueCommand(board.cells, cmd);
-  boardHistory.push({ ...board });
-  commandHistory.push(cmd);
 
   if (!cmd.pluck) {
     const pieceSize = cmd.slot[2];
@@ -36,7 +48,9 @@ function autoPlayNextMove(game) {
   }
 
   activePlayer.turnCount++;
+  game.turnCount++;
   game.winner = checkForWinner(game.board.cells);
+  game.snapshots.push(makeGameSnapshot(game, cmd));
 
   const swapper = game.activePlayer;
   game.activePlayer = game.inactivePlayer;
@@ -56,8 +70,8 @@ function createGame(p1Name = "P1", p2Name = "P2") {
     activePlayer: p1,
     inactivePlayer: p2,
     board,
-    boardHistory: [{ ...board }],
-    commandHistory: [{ start: true }],
+    turnCount: 0,
+    snapshots: [],
     winner: undefined,
   };
 }
