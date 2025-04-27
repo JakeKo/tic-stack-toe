@@ -64,7 +64,7 @@ function createGame(p1Name = "P1", p2Name = "P2") {
   const p1 = createPlayer(p1Name, strategyRandom);
   const p2 = createPlayer(p2Name, strategyRandom);
 
-  return {
+  const game = {
     p1,
     p2,
     activePlayer: p1,
@@ -74,6 +74,8 @@ function createGame(p1Name = "P1", p2Name = "P2") {
     snapshots: [],
     winner: undefined,
   };
+  game.snapshots.push(makeGameSnapshot(game));
+  return game;
 }
 
 export { createGame, autoPlayGame, autoPlayNextMove };

@@ -53,7 +53,7 @@ function App() {
   useEffect(() => {
     if (!currentGame) {
       setCurrentSnapshot();
-    } else if (snapshotIndex >= 0 && snapshotIndex < currentGame.turnCount) {
+    } else if (snapshotIndex >= 0 && snapshotIndex <= currentGame.turnCount) {
       setCurrentSnapshot(currentGame.snapshots[snapshotIndex]);
     }
   }, [snapshotIndex, currentGame]);
@@ -74,7 +74,7 @@ function App() {
           recordP2GameResult("draw", p1Name);
         }
 
-        setSnapshotIndex(game.turnCount - 1);
+        setSnapshotIndex(game.turnCount);
         setGames((games) => [...games, game]);
       }, AUTO_PLAY_INTERVAL);
 
@@ -87,7 +87,7 @@ function App() {
     if (gameIndex < games.length - 1) {
       const nextGame = games[gameIndex + 1];
       setGameIndex(gameIndex + 1);
-      setSnapshotIndex(nextGame.turnCount - 1);
+      setSnapshotIndex(nextGame.turnCount);
     }
   }
 
@@ -95,16 +95,16 @@ function App() {
     if (gameIndex > 0) {
       const prevGame = games[gameIndex - 1];
       setGameIndex(gameIndex - 1);
-      setSnapshotIndex(prevGame.turnCount - 1);
+      setSnapshotIndex(prevGame.turnCount);
     }
   }
 
   function nextSnapshot() {
-    if (snapshotIndex < currentGame.turnCount - 1) {
+    if (snapshotIndex < currentGame.turnCount) {
       setSnapshotIndex(snapshotIndex + 1);
     } else {
       const newGame = autoPlayNextMove(currentGame);
-      setSnapshotIndex(newGame.turnCount - 1);
+      setSnapshotIndex(newGame.turnCount);
     }
   }
 
@@ -139,7 +139,7 @@ function App() {
       </button>
       <button
         onClick={nextSnapshot}
-        disabled={snapshotIndex >= currentGame?.turnCount - 1}
+        disabled={snapshotIndex >= currentGame?.turnCount}
       >
         {">>"}
       </button>
