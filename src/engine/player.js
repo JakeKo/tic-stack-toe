@@ -9,7 +9,11 @@ function createPlayer(name, strategy, inventory = [2, 2, 2]) {
   };
 
   player.getCommand = function (game) {
-    return strategy(player, game.board.cells);
+    if (strategy) {
+      return strategy(player, game.board.cells);
+    } else {
+      return () => {};
+    }
   };
 
   return player;

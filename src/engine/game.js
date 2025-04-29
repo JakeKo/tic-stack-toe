@@ -1,6 +1,5 @@
 import { checkForWinner, createBoard, issueCommand } from "./board";
 import { createPlayer } from "./player";
-import { strategyRandom } from "./strategy";
 
 const MAX_GAME_TURNS = 100;
 
@@ -62,10 +61,10 @@ function playNextCommand(game, cmd) {
   return game;
 }
 
-function createGame(p1Name = "P1", p2Name = "P2") {
+function createGame(p1Name, p2Name, p1Strategy, p2Strategy) {
   const board = createBoard();
-  const p1 = createPlayer(p1Name, strategyRandom);
-  const p2 = createPlayer(p2Name, strategyRandom);
+  const p1 = createPlayer(p1Name, p1Strategy);
+  const p2 = createPlayer(p2Name, p2Strategy);
 
   const game = {
     p1,
@@ -81,4 +80,4 @@ function createGame(p1Name = "P1", p2Name = "P2") {
   return game;
 }
 
-export { createGame, autoPlayGame, autoPlayNextCommand };
+export { createGame, autoPlayGame, autoPlayNextCommand, playNextCommand };
