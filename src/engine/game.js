@@ -8,7 +8,7 @@ function autoPlayGame(p1Name = "P1", p2Name = "P2") {
   const game = createGame(p1Name, p2Name);
 
   for (let i = 0; i < MAX_GAME_TURNS; i++) {
-    autoPlayNextMove(game);
+    autoPlayNextCommand(game);
 
     if (game.winner) {
       break;
@@ -32,13 +32,16 @@ function makeGameSnapshot(game, command) {
   };
 }
 
-function autoPlayNextMove(game) {
+function autoPlayNextCommand(game) {
+  return playNextCommand(game, game.activePlayer.getCommand(game));
+}
+
+function playNextCommand(game, cmd) {
   if (!game || game.winner) {
     return game;
   }
 
   const { activePlayer, board } = game;
-  const cmd = activePlayer.getCommand(game);
   board.cells = issueCommand(board.cells, cmd);
 
   if (!cmd.pluck) {
@@ -78,4 +81,4 @@ function createGame(p1Name = "P1", p2Name = "P2") {
   return game;
 }
 
-export { createGame, autoPlayGame, autoPlayNextMove };
+export { createGame, autoPlayGame, autoPlayNextCommand };
