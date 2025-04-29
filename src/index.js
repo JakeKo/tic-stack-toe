@@ -4,6 +4,7 @@ import "./index.css";
 import { BrowserRouter, Routes, Route } from "react-router";
 import App from "./App";
 import AutoPlayer from "./pages/AutoPlayer";
+import ManualPlayer from "./pages/ManualPlayer";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -12,7 +13,7 @@ root.render(
       <Routes>
         <Route index element={<App />} />
         <Route path="/auto" element={<AutoPlayer />} />
-        <Route path="/manual" element={<App />} />
+        <Route path="/manual" element={<ManualPlayer />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
