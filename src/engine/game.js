@@ -3,8 +3,8 @@ import { createPlayer } from "./player";
 
 const MAX_GAME_TURNS = 100;
 
-function autoPlayGame(p1Name = "P1", p2Name = "P2") {
-  const game = createGame(p1Name, p2Name);
+function autoPlayGame(p1Name, p2Name, p1Strategy, p2Strategy) {
+  const game = createGame(p1Name, p2Name, p1Strategy, p2Strategy);
 
   for (let i = 0; i < MAX_GAME_TURNS; i++) {
     autoPlayNextCommand(game);

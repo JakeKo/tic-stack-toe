@@ -3,6 +3,7 @@ import GameStats from "../components/gameStats";
 import { autoPlayGame, autoPlayNextCommand } from "../engine/game";
 import BoardDisplay from "../components/boardDisplay";
 import PlayerDisplay from "../components/playerDisplay";
+import { strategyRandom } from "../engine/strategy";
 
 const AUTO_PLAY_INTERVAL = 100;
 
@@ -60,7 +61,12 @@ function AutoPlayer() {
   useEffect(() => {
     if (autoPlay) {
       const intervalId = setInterval(() => {
-        const game = autoPlayGame(p1Name, p2Name);
+        const game = autoPlayGame(
+          p1Name,
+          p2Name,
+          strategyRandom,
+          strategyRandom
+        );
 
         if (game.winner === p1Name) {
           recordP1GameResult("win", p2Name);
