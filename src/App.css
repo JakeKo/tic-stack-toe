@@ -80,6 +80,10 @@
   padding: 12px;
 }
 
+.active {
+  border: 8px solid lightblue;
+}
+
 .player-inventory {
   display: grid;
   place-items: center;

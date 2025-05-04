@@ -4,7 +4,7 @@ function nArray(n) {
   return Array.from({ length: n }, (_, i) => i);
 }
 
-function PlayerDisplay({ player, isP1 }) {
+function PlayerDisplay({ player, isP1, isActive, handleCommand }) {
   function getInventoryStyle() {
     const widestPiece = player.numSizes * PIECE_SIZE * 2;
     return {
@@ -31,8 +31,20 @@ function PlayerDisplay({ player, isP1 }) {
   }
 
   return (
-    <div className="player-display">
+    <div className={`player-display ${isActive ? "active" : ""}`}>
       <h1>{player.name}</h1>
+      <input
+        type="text"
+        disabled={!isActive}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleCommand(e.target.value);
+            e.target.value = ""; // Clear input after submission
+          }
+        }}
+        placeholder="[0, 0, 0]"
+      />
       <div className="player-inventory" style={getInventoryStyle()}>
         {nArray(player.numSizes).map((row) =>
           nArray(player.numPiecesPerSize).map((col) => (
