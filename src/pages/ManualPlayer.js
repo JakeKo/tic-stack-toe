@@ -8,7 +8,6 @@ function ManualPlayer() {
   const [game, setGame] = useState(
     createGame("P1", "P2", null, strategyRandom)
   );
-  const [, setForceRefresh] = useState(false);
 
   function handleCommand(command) {
     const fullCommand = {
@@ -18,7 +17,6 @@ function ManualPlayer() {
 
     const newGame = playNextCommand(game, fullCommand);
     setGame(newGame);
-    setForceRefresh((prev) => !prev); // Trigger a re-render
   }
 
   return (
@@ -27,7 +25,7 @@ function ManualPlayer() {
         <PlayerDisplay
           player={game.p1}
           isP1
-          isActive={game.activePlayer === game.p1}
+          isActive={game.activePlayer.name === game.p1.name}
           handleCommand={handleCommand}
         />
         <BoardDisplay
@@ -37,7 +35,7 @@ function ManualPlayer() {
         />
         <PlayerDisplay
           player={game.p2}
-          isActive={game.activePlayer === game.p2}
+          isActive={game.activePlayer.name === game.p2.name}
           handleCommand={handleCommand}
         />
       </div>
