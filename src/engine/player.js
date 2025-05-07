@@ -1,6 +1,7 @@
 function createPlayer(name, strategy, inventory = [2, 2, 2]) {
   const player = {
     name,
+    isManual: !strategy,
     inventory,
     strategy,
     turnCount: 0,
@@ -12,12 +13,4 @@ function createPlayer(name, strategy, inventory = [2, 2, 2]) {
   return player;
 }
 
-function getCommand(player, game) {
-  if (player.strategy) {
-    return player.strategy(player, game.board.cells);
-  } else {
-    return () => {};
-  }
-}
-
-export { createPlayer, getCommand };
+export { createPlayer };

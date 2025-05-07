@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import GameStats from "../components/GameStats";
-import { autoPlayGame, autoPlayNextCommand } from "../engine/game";
+import { autoPlayGame, playNextCommand } from "../engine/game";
 import BoardDisplay from "../components/BoardDisplay";
 import PlayerDisplay from "../components/PlayerDisplay";
 import { strategyRandom } from "../engine/strategy";
@@ -108,7 +108,9 @@ function AutoPlayer() {
     if (snapshotIndex < currentGame.turnCount) {
       setSnapshotIndex(snapshotIndex + 1);
     } else {
-      const newGame = autoPlayNextCommand(currentGame);
+      const { activePlayer: p, board } = currentGame;
+      const command = p.strategy(p, board.cells);
+      const newGame = playNextCommand(currentGame, command);
       setSnapshotIndex(newGame.turnCount);
     }
   }

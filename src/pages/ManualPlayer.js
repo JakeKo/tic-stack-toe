@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import PlayerDisplay from "../components/PlayerDisplay";
 import BoardDisplay from "../components/BoardDisplay";
-import {
-  autoPlayNextCommand,
-  createGame,
-  playNextCommand,
-} from "../engine/game";
+import { createGame, playNextCommand } from "../engine/game";
 import { strategyRandom } from "../engine/strategy";
 
 function ManualPlayer() {
@@ -24,8 +20,11 @@ function ManualPlayer() {
   }
 
   useEffect(() => {
-    if (game.activePlayer.strategy) {
-      const newGame = autoPlayNextCommand(game);
+    const { activePlayer: p, board } = game;
+
+    if (!p.isManual) {
+      const command = p.strategy(p, board.cells);
+      const newGame = playNextCommand(game, command);
       setGame(newGame);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

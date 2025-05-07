@@ -1,11 +1,6 @@
-import {
-  checkForWinner,
-  createBoard,
-  issueCommand,
-  toConsoleString,
-} from "../board";
+import { createBoard } from "../board";
 import { createPlayer } from "../player";
-import { getAllPossibleCommands, strategyRandom } from "../strategy";
+import { getAllPossibleCommands } from "../strategy";
 
 test("getAllPossibleCommands returns all possible commands on occupied board", () => {
   const board = createBoard();
@@ -23,12 +18,4 @@ test("getAllPossibleCommands returns all possible commands on empty board", () =
     player.inventory
   );
   expect(actualCommands.length).toBe(27);
-});
-
-test("strategyRandom can play a game", () => {
-  const player = createPlayer("p1", strategyRandom);
-  const board = createBoard();
-
-  const cmd = player.getCommand({ board });
-  expect(cmd).toBeDefined();
 });

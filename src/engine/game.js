@@ -1,6 +1,6 @@
 import { current, produce } from "immer";
 import { checkForWinner, createBoard, issueCommand } from "./board";
-import { createPlayer, getCommand } from "./player";
+import { createPlayer } from "./player";
 
 const MAX_GAME_TURNS = 100;
 
@@ -8,7 +8,9 @@ function autoPlayGame(p1Name, p2Name, p1Strategy, p2Strategy) {
   let game = createGame(p1Name, p2Name, p1Strategy, p2Strategy);
 
   for (let i = 0; i < MAX_GAME_TURNS; i++) {
-    game = autoPlayNextCommand(game);
+    const { activePlayer: p, board } = game;
+    const command = p.strategy(p, board.cells);
+    game = playNextCommand(game, command);
 
     if (game.winner) {
       break;
@@ -30,10 +32,6 @@ function makeGameSnapshot(game, command) {
     board: JSON.parse(JSON.stringify(game.board)),
     command,
   };
-}
-
-function autoPlayNextCommand(game) {
-  return playNextCommand(game, getCommand(game.activePlayer, game));
 }
 
 function isP1(player, game) {
@@ -100,11 +98,4 @@ function createGame(p1Name, p2Name, p1Strategy, p2Strategy) {
   return game;
 }
 
-export {
-  createGame,
-  autoPlayGame,
-  autoPlayNextCommand,
-  playNextCommand,
-  isP1,
-  isP2,
-};
+export { createGame, autoPlayGame, playNextCommand, isP1, isP2 };
