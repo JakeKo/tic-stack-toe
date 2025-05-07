@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import PlayerDisplay from "../components/playerDisplay";
-import BoardDisplay from "../components/boardDisplay";
+import PlayerDisplay from "../components/PlayerDisplay";
+import BoardDisplay from "../components/BoardDisplay";
 import {
   autoPlayNextCommand,
   createGame,

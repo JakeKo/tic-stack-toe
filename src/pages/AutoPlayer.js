@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import GameStats from "../components/gameStats";
+import GameStats from "../components/GameStats";
 import { autoPlayGame, autoPlayNextCommand } from "../engine/game";
-import BoardDisplay from "../components/boardDisplay";
-import PlayerDisplay from "../components/playerDisplay";
+import BoardDisplay from "../components/BoardDisplay";
+import PlayerDisplay from "../components/PlayerDisplay";
 import { strategyRandom } from "../engine/strategy";
 
 const AUTO_PLAY_INTERVAL = 100;
