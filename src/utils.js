@@ -8,8 +8,37 @@ function gamePieceSize(size) {
   return (size + 1) * PIECE_SIZE_UNIT * 2;
 }
 
+function cellColorGenerator(p1Name, p2Name) {
+  return (name) => {
+    if (name === p1Name) {
+      return "rgba(0, 255, 0, 0.2)";
+    } else if (name === p2Name) {
+      return "rgba(255, 0, 0, 0.2)";
+    }
+    return "white";
+  };
+}
+
 function nArray(n) {
   return Array.from({ length: n }, (_, i) => i);
 }
 
-export { PIECE_SIZE_UNIT, gamePieceColor, gamePieceSize, nArray };
+function findLastIndex(list, searchFunc) {
+  let i = list.length - 1;
+  for (i; i >= 0; i--) {
+    if (searchFunc(list[i])) {
+      return i;
+    }
+  }
+
+  return i;
+}
+
+export {
+  PIECE_SIZE_UNIT,
+  gamePieceColor,
+  gamePieceSize,
+  cellColorGenerator,
+  nArray,
+  findLastIndex,
+};

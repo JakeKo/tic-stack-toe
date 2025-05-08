@@ -1,4 +1,5 @@
 import { produce } from "immer";
+import { findLastIndex } from "../utils";
 
 function generateEmptyCells(size, slotCount) {
   const cells = [];
@@ -38,17 +39,6 @@ function calculateWinningLines(size) {
   lines.push(diagonal2);
 
   return lines;
-}
-
-function findLastIndex(list, searchFunc) {
-  let i = list.length - 1;
-  for (i; i >= 0; i--) {
-    if (searchFunc(list[i])) {
-      return i;
-    }
-  }
-
-  return i;
 }
 
 function isSlotPinned(cells, slot) {

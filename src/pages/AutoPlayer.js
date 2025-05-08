@@ -153,11 +153,7 @@ function AutoPlayer() {
       {currentSnapshot && (
         <div className="game-container">
           <PlayerDisplay player={currentSnapshot.p1} isP1 />
-          <BoardDisplay
-            board={currentSnapshot.board}
-            p1Name={currentSnapshot.p1.name}
-            p2Name={currentSnapshot.p2.name}
-          />
+          <BoardDisplay game={currentSnapshot} />
           <PlayerDisplay player={currentSnapshot.p2} />
         </div>
       )}
