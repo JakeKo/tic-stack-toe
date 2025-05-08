@@ -1,10 +1,10 @@
 import { useDrag } from "react-dnd";
 import { PIECE_SIZE_UNIT, gamePieceColor, gamePieceSize } from "../utils";
 
-function GamePieceDraggable({ isP1, size }) {
+function GamePieceDraggable({ isP1, size, cell }) {
   const [, dragRef] = useDrag({
     type: "game-piece",
-    item: { size },
+    item: { size, cell },
   });
 
   return (

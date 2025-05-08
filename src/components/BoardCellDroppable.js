@@ -6,9 +6,15 @@ function BoardCellDroppable({ game, x, y, handleCommand, children }) {
   const [, drop] = useDrop(() => ({
     accept: "game-piece",
     drop: (item) => {
-      const slot = [x, y, item.size];
+      const { size, cell } = item;
+      const slot = [x, y, size];
       const player = game.activePlayer.name;
       const command = { player, slot };
+
+      if (cell) {
+        command.pluck = [...cell, size];
+      }
+
       handleCommand(command);
     },
   }));

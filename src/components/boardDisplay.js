@@ -46,6 +46,7 @@ function BoardDisplay({ game, handleCommand }) {
                       key={compKey(x, y, i)}
                       isP1={pName === game.p1.name}
                       size={i}
+                      cell={[x, y]}
                     />
                   )
                 );
