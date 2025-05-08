@@ -1,8 +1,12 @@
-import { gamePieceSize, PIECE_SIZE_UNIT, nArray } from "../utils";
+import { gamePieceSize, PIECE_SIZE_UNIT, nArray, compKey } from "../utils";
 import GamePiece from "./GamePiece";
 import GamePieceDraggable from "./GamePieceDraggable";
+import GamePieceShadow from "./GamePieceShadow";
 
 function PlayerDisplay({ player, isP1, isActive }) {
+  const GamePieceComponent = isActive ? GamePieceDraggable : GamePiece;
+  const playerName = isActive ? `> ${player.name} <` : player.name;
+
   function getInventoryStyle() {
     const widestPiece = player.numSizes * PIECE_SIZE_UNIT * 2;
     return {
@@ -18,25 +22,16 @@ function PlayerDisplay({ player, isP1, isActive }) {
   }
 
   return (
-    <div className={`player-display ${isActive ? "active" : ""}`}>
-      <h1>{player.name}</h1>
+    <div className="player-display">
+      <h1>{playerName}</h1>
       <div className="player-inventory" style={getInventoryStyle()}>
         {nArray(player.numSizes).map((size) =>
           nArray(player.numPiecesPerSize).map((pieceIndex) => (
-            <div key={`${size}-${pieceIndex}`}>
+            <div key={compKey(size, pieceIndex)}>
               {hasNPiecesOfSize(size, pieceIndex) ? (
-                isActive ? (
-                  <GamePieceDraggable isP1={isP1} size={size} />
-                ) : (
-                  <GamePiece isP1={isP1} size={size} />
-                )
+                <GamePieceComponent isP1={isP1} size={size} />
               ) : (
-                <div
-                  className="piece-shadow"
-                  style={{
-                    width: `${gamePieceSize(size)}px`,
-                  }}
-                />
+                <GamePieceShadow size={size} />
               )}
             </div>
           ))

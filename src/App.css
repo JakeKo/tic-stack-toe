@@ -85,7 +85,7 @@
 }
 
 .active {
-  border: 8px solid lightblue;
+  background-color: #dbdbdb;
 }
 
 .player-inventory {
