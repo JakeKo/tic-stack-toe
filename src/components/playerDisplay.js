@@ -1,33 +1,19 @@
-const PIECE_SIZE = 20;
-
-function nArray(n) {
-  return Array.from({ length: n }, (_, i) => i);
-}
+import { gamePieceSize, PIECE_SIZE_UNIT, nArray } from "../utils";
+import GamePiece from "./GamePiece";
 
 function PlayerDisplay({ player, isP1, isActive, handleCommand }) {
   function getInventoryStyle() {
-    const widestPiece = player.numSizes * PIECE_SIZE * 2;
+    const widestPiece = player.numSizes * PIECE_SIZE_UNIT * 2;
     return {
       gridTemplateColumns: `repeat(${player.numPiecesPerSize}, ${widestPiece}px)`,
       gridTemplateRows: nArray(player.numSizes)
-        .map((i) => `${PIECE_SIZE * 2 * (i + 1)}px`)
+        .map((i) => `${gamePieceSize(i)}px`)
         .join(" "),
     };
   }
 
-  function getPieceShadowStyle(row, col) {
-    return {
-      gridArea: `${row + 1} / ${col + 1} / span 1 / span 1`,
-      width: `${(row + 1) * PIECE_SIZE * 2}px`,
-    };
-  }
-
-  function getPieceStyle(row, col) {
-    return {
-      border: `${PIECE_SIZE}px solid ${isP1 ? "green" : "red"}`,
-      width: `${(row + 1) * PIECE_SIZE * 2}px`,
-      gridArea: `${row + 1} / ${col + 1} / span 1 / span 1`,
-    };
+  function hasNPiecesOfSize(size, n) {
+    return player.inventory[size] > n;
   }
 
   return (
@@ -46,22 +32,20 @@ function PlayerDisplay({ player, isP1, isActive, handleCommand }) {
         placeholder="[0, 0, 0]"
       />
       <div className="player-inventory" style={getInventoryStyle()}>
-        {nArray(player.numSizes).map((row) =>
-          nArray(player.numPiecesPerSize).map((col) => (
-            <div
-              key={`${row}-${col}`}
-              className="piece-shadow"
-              style={getPieceShadowStyle(row, col)}
-            />
-          ))
-        )}
-        {player.inventory.map((count, size) =>
-          nArray(count).map((i) => (
-            <div
-              key={`${size}-${i}`}
-              className="piece"
-              style={getPieceStyle(size, i)}
-            />
+        {nArray(player.numSizes).map((size) =>
+          nArray(player.numPiecesPerSize).map((pieceIndex) => (
+            <div key={`${size}-${pieceIndex}`}>
+              {hasNPiecesOfSize(size, pieceIndex) ? (
+                <GamePiece isP1={isP1} size={size} />
+              ) : (
+                <div
+                  className="piece-shadow"
+                  style={{
+                    width: `${gamePieceSize(size)}px`,
+                  }}
+                />
+              )}
+            </div>
           ))
         )}
       </div>
