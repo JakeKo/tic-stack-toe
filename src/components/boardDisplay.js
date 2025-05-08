@@ -1,9 +1,10 @@
-import { findLastIndex } from "../utils";
+import { compKey, findLastIndex } from "../utils";
 import BoardCell from "./BoardCell";
+import BoardCellDroppable from "./BoardCellDroppable";
 import GamePiece from "./GamePiece";
 import GamePieceDraggable from "./GamePieceDraggable";
 
-function BoardDisplay({ game }) {
+function BoardDisplay({ game, handleCommand }) {
   function canDragPiece(pName, slot) {
     const [x, y, i] = slot;
     const isBiggestPiece =
@@ -18,27 +19,40 @@ function BoardDisplay({ game }) {
   return (
     <div className="board-display" style={{ width: "500px" }}>
       {game.board.cells.map((col, x) =>
-        col.map((cell, y) => (
-          <BoardCell key={`${x}-${y}`} game={game} x={x} y={y}>
-            {cell.map(
-              (pName, i) =>
-                pName &&
-                (canDragPiece(pName, [x, y, i]) ? (
-                  <GamePieceDraggable
-                    key={`${x}-${y}-${i}`}
-                    isP1={pName === game.p1.name}
-                    size={i}
-                  />
-                ) : (
-                  <GamePiece
-                    key={`${x}-${y}-${i}`}
-                    isP1={pName === game.p1.name}
-                    size={i}
-                  />
-                )) // eslint-disable-line react/jsx-no-bind
-            )}
-          </BoardCell>
-        ))
+        col.map((cell, y) => {
+          // Only use a droppable cell if the player is manual
+          // So cells are not droppable for a bot player/when auto-playing a game
+          // It is necessary to avoid using BoardCellDroppable for auto-play
+          //   because <AutoPlayer /> isn't wrapped in a <DnDProvider />
+          const BoardCellComponent = game.activePlayer.isManual
+            ? BoardCellDroppable
+            : BoardCell;
+
+          return (
+            <BoardCellComponent
+              key={compKey(x, y)}
+              game={game}
+              x={x}
+              y={y}
+              handleCommand={handleCommand}
+            >
+              {cell.map((pName, i) => {
+                const GamePieceComponent = canDragPiece(pName, [x, y, i])
+                  ? GamePieceDraggable
+                  : GamePiece;
+                return (
+                  pName && (
+                    <GamePieceComponent
+                      key={compKey(x, y, i)}
+                      isP1={pName === game.p1.name}
+                      size={i}
+                    />
+                  )
+                );
+              })}
+            </BoardCellComponent>
+          );
+        })
       )}
     </div>
   );

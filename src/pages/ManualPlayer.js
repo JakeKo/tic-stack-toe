@@ -12,12 +12,7 @@ function ManualPlayer() {
   );
 
   function handleCommand(command) {
-    const fullCommand = {
-      player: game.activePlayer.name,
-      slot: JSON.parse(command),
-    };
-
-    const newGame = playNextCommand(game, fullCommand);
+    const newGame = playNextCommand(game, command);
     setGame(newGame);
   }
 
@@ -42,7 +37,7 @@ function ManualPlayer() {
             isActive={game.activePlayer.name === game.p1.name}
             handleCommand={handleCommand}
           />
-          <BoardDisplay game={game} />
+          <BoardDisplay game={game} handleCommand={handleCommand} />
           <PlayerDisplay
             player={game.p2}
             isActive={game.activePlayer.name === game.p2.name}

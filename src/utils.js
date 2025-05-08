@@ -34,6 +34,10 @@ function findLastIndex(list, searchFunc) {
   return i;
 }
 
+function compKey(...args) {
+  return args.join("-");
+}
+
 export {
   PIECE_SIZE_UNIT,
   gamePieceColor,
@@ -41,4 +45,5 @@ export {
   cellColorGenerator,
   nArray,
   findLastIndex,
+  compKey,
 };
