@@ -35,13 +35,11 @@ function ManualPlayer() {
             player={game.p1}
             isP1
             isActive={game.activePlayer.name === game.p1.name}
-            handleCommand={handleCommand}
           />
           <BoardDisplay game={game} handleCommand={handleCommand} />
           <PlayerDisplay
             player={game.p2}
             isActive={game.activePlayer.name === game.p2.name}
-            handleCommand={handleCommand}
           />
         </div>
       </div>
