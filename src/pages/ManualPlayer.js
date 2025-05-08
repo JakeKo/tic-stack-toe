@@ -3,6 +3,8 @@ import PlayerDisplay from "../components/PlayerDisplay";
 import BoardDisplay from "../components/BoardDisplay";
 import { createGame, playNextCommand } from "../engine/game";
 import { strategyRandom } from "../engine/strategy";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 function ManualPlayer() {
   const [game, setGame] = useState(
@@ -31,26 +33,28 @@ function ManualPlayer() {
   }, [game.activePlayer]);
 
   return (
-    <div className="app">
-      <div className="game-container">
-        <PlayerDisplay
-          player={game.p1}
-          isP1
-          isActive={game.activePlayer.name === game.p1.name}
-          handleCommand={handleCommand}
-        />
-        <BoardDisplay
-          board={game.board}
-          p1Name={game.p1.name}
-          p2Name={game.p2.name}
-        />
-        <PlayerDisplay
-          player={game.p2}
-          isActive={game.activePlayer.name === game.p2.name}
-          handleCommand={handleCommand}
-        />
+    <DndProvider backend={HTML5Backend}>
+      <div className="app">
+        <div className="game-container">
+          <PlayerDisplay
+            player={game.p1}
+            isP1
+            isActive={game.activePlayer.name === game.p1.name}
+            handleCommand={handleCommand}
+          />
+          <BoardDisplay
+            board={game.board}
+            p1Name={game.p1.name}
+            p2Name={game.p2.name}
+          />
+          <PlayerDisplay
+            player={game.p2}
+            isActive={game.activePlayer.name === game.p2.name}
+            handleCommand={handleCommand}
+          />
+        </div>
       </div>
-    </div>
+    </DndProvider>
   );
 }
 

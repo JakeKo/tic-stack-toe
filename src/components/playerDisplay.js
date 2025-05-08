@@ -1,5 +1,6 @@
 import { gamePieceSize, PIECE_SIZE_UNIT, nArray } from "../utils";
 import GamePiece from "./GamePiece";
+import GamePieceDraggable from "./GamePieceDraggable";
 
 function PlayerDisplay({ player, isP1, isActive, handleCommand }) {
   function getInventoryStyle() {
@@ -36,7 +37,11 @@ function PlayerDisplay({ player, isP1, isActive, handleCommand }) {
           nArray(player.numPiecesPerSize).map((pieceIndex) => (
             <div key={`${size}-${pieceIndex}`}>
               {hasNPiecesOfSize(size, pieceIndex) ? (
-                <GamePiece isP1={isP1} size={size} />
+                isActive ? (
+                  <GamePieceDraggable isP1={isP1} size={size} />
+                ) : (
+                  <GamePiece isP1={isP1} size={size} />
+                )
               ) : (
                 <div
                   className="piece-shadow"

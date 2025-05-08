@@ -67,6 +67,10 @@
   box-sizing: border-box;
 }
 
+.draggable {
+  cursor: grab;
+}
+
 .game-container {
   display: flex;
   align-items: center;
