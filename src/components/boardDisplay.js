@@ -1,19 +1,9 @@
-import { getCellWinner } from "../engine/board";
-import { cellColorGenerator, findLastIndex } from "../utils";
+import { findLastIndex } from "../utils";
+import BoardCell from "./BoardCell";
 import GamePiece from "./GamePiece";
 import GamePieceDraggable from "./GamePieceDraggable";
 
 function BoardDisplay({ game }) {
-  const cellColor = cellColorGenerator(game.p1.name, game.p2.name);
-
-  function getCellStyle(x, y) {
-    const winner = getCellWinner(game.board.cells, [x, y]);
-    return {
-      gridArea: `${y + 1} / ${x + 1} / span 1 / span 1`,
-      backgroundColor: cellColor(winner),
-    };
-  }
-
   function canDragPiece(pName, slot) {
     const [x, y, i] = slot;
     const isBiggestPiece =
@@ -29,7 +19,7 @@ function BoardDisplay({ game }) {
     <div className="board-display" style={{ width: "500px" }}>
       {game.board.cells.map((col, x) =>
         col.map((cell, y) => (
-          <div key={`${x}-${y}`} className="cell" style={getCellStyle(x, y)}>
+          <BoardCell key={`${x}-${y}`} game={game} x={x} y={y}>
             {cell.map(
               (pName, i) =>
                 pName &&
@@ -47,7 +37,7 @@ function BoardDisplay({ game }) {
                   />
                 )) // eslint-disable-line react/jsx-no-bind
             )}
-          </div>
+          </BoardCell>
         ))
       )}
     </div>
