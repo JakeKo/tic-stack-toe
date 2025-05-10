@@ -98,4 +98,11 @@ function createGame(p1Name, p2Name, p1Strategy, p2Strategy) {
   return game;
 }
 
-export { createGame, autoPlayGame, playNextCommand, isP1, isP2 };
+export {
+  createGame,
+  autoPlayGame,
+  playNextCommand,
+  makeGameSnapshot,
+  isP1,
+  isP2,
+};
