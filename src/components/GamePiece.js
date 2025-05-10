@@ -1,7 +1,10 @@
 import { useDrag } from "react-dnd";
-import { PIECE_SIZE_UNIT, gamePieceColor, gamePieceSize } from "../utils";
+import { PIECE_SIZE_UNIT, gamePieceSize } from "../utils";
+import { useGamePieceColor } from "../store/game";
 
-function GamePiece({ isP1, size, cell }) {
+function GamePiece({ playerName, size, cell }) {
+  const gamePieceColor = useGamePieceColor(playerName);
+
   const [, dragRef] = useDrag({
     type: "game-piece",
     item: { size, cell },
@@ -12,7 +15,7 @@ function GamePiece({ isP1, size, cell }) {
       ref={dragRef}
       className="piece draggable"
       style={{
-        border: `${PIECE_SIZE_UNIT}px solid ${gamePieceColor(isP1)}`,
+        border: `${PIECE_SIZE_UNIT}px solid ${gamePieceColor}`,
         width: `${gamePieceSize(size)}px`,
       }}
     />

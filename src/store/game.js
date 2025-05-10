@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { createBoard } from "../engine/board";
 import { createPlayer } from "../engine/player";
 import { makeGameSnapshot } from "../engine/game";
+import { useSelector } from "react-redux";
 
 const initialState = {
   active: false,
@@ -25,6 +26,13 @@ export const gameSlice = createSlice({
       state.inactivePlayer = state.p2;
       state.snapshots.push(makeGameSnapshot(state));
     },
+    setGame: (state, action) => {
+      for (const [key, value] of Object.entries(action.payload)) {
+        if (key in state) {
+          state[key] = value;
+        }
+      }
+    },
     resetGame: (state) => {
       state.active = false;
       state.p1 = createPlayer("P1");
@@ -39,4 +47,18 @@ export const gameSlice = createSlice({
   },
 });
 
+function useGamePieceColor(playerName) {
+  return useSelector((state) => {
+    if (playerName === state.game.p1.name) {
+      return "green";
+    } else if (playerName === state.game.p2.name) {
+      return "red";
+    }
+
+    return "grey";
+  });
+}
+
+export const { startGame, setGame, resetGame } = gameSlice.actions;
+export { useGamePieceColor };
 export default gameSlice.reducer;

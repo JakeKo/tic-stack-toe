@@ -27,7 +27,7 @@ function PlayerDisplay({ player, isP1, isActive }) {
           nArray(player.numPiecesPerSize).map((pieceIndex) => (
             <div key={compKey(size, pieceIndex)}>
               {hasNPiecesOfSize(size, pieceIndex) ? (
-                <GamePiece isP1={isP1} size={size} />
+                <GamePiece playerName={player.name} size={size} />
               ) : (
                 <GamePieceShadow size={size} />
               )}

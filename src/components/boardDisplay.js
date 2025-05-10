@@ -1,19 +1,8 @@
-import { compKey, findLastIndex } from "../utils";
+import { compKey } from "../utils";
 import BoardCell from "./BoardCell";
 import GamePiece from "./GamePiece";
 
 function BoardDisplay({ game, handleCommand }) {
-  function canDragPiece(pName, slot) {
-    const [x, y, i] = slot;
-    const isBiggestPiece =
-      findLastIndex(game.board.cells[x][y], (s) => !!s) === i;
-    return (
-      game.activePlayer.name === pName &&
-      game.activePlayer.isManual &&
-      isBiggestPiece
-    );
-  }
-
   return (
     <div className="board-display" style={{ width: "500px" }}>
       {game.board.cells.map((col, x) =>
@@ -27,12 +16,11 @@ function BoardDisplay({ game, handleCommand }) {
               handleCommand={handleCommand}
             >
               {cell.map((pName, i) => {
-                // const GamePieceComponent = canDragPiece(pName, [x, y, i]);
                 return (
                   pName && (
                     <GamePiece
                       key={compKey(x, y, i)}
-                      isP1={pName === game.p1.name}
+                      playerName={pName}
                       size={i}
                       cell={[x, y]}
                     />
