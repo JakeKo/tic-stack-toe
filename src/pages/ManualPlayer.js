@@ -34,7 +34,6 @@ function ManualPlayer() {
       <div className="game-container">
         <PlayerDisplay
           player={game.p1}
-          isP1
           isActive={game.activePlayer.name === game.p1.name}
         />
         <BoardDisplay game={game} handleCommand={handleCommand} />
