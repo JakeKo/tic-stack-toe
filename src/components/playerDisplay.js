@@ -1,10 +1,8 @@
 import { gamePieceSize, PIECE_SIZE_UNIT, nArray, compKey } from "../utils";
-import GamePiece from "./GamePiece";
 import GamePieceDraggable from "./GamePieceDraggable";
 import GamePieceShadow from "./GamePieceShadow";
 
 function PlayerDisplay({ player, isP1, isActive }) {
-  const GamePieceComponent = isActive ? GamePieceDraggable : GamePiece;
   const playerName = isActive ? `> ${player.name} <` : player.name;
 
   function getInventoryStyle() {
@@ -29,7 +27,7 @@ function PlayerDisplay({ player, isP1, isActive }) {
           nArray(player.numPiecesPerSize).map((pieceIndex) => (
             <div key={compKey(size, pieceIndex)}>
               {hasNPiecesOfSize(size, pieceIndex) ? (
-                <GamePieceComponent isP1={isP1} size={size} />
+                <GamePieceDraggable isP1={isP1} size={size} />
               ) : (
                 <GamePieceShadow size={size} />
               )}
