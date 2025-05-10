@@ -2,7 +2,7 @@ import { useDrop } from "react-dnd";
 import { getCellWinner } from "../engine/board";
 import { cellColorGenerator } from "../utils";
 
-function BoardCellDroppable({ game, x, y, handleCommand, children }) {
+function BoardCell({ game, x, y, handleCommand, children }) {
   const [, drop] = useDrop(() => ({
     accept: "game-piece",
     drop: (item) => {
@@ -18,21 +18,19 @@ function BoardCellDroppable({ game, x, y, handleCommand, children }) {
       handleCommand(command);
     },
   }));
-  const cellColor = cellColorGenerator(game.p1.name, game.p2.name);
 
-  function getCellStyle(x, y) {
-    const winner = getCellWinner(game.board.cells, [x, y]);
-    return {
-      gridArea: `${y + 1} / ${x + 1} / span 1 / span 1`,
-      backgroundColor: cellColor(winner),
-    };
-  }
+  const cellWinner = getCellWinner(game.board.cells, [x, y]);
+  const cellColor = cellColorGenerator(game.p1.name, game.p2.name);
+  const cellStyle = {
+    gridArea: `${y + 1} / ${x + 1} / span 1 / span 1`,
+    backgroundColor: cellColor(cellWinner),
+  };
 
   return (
-    <div ref={drop} className="cell" style={getCellStyle(x, y)}>
+    <div ref={drop} className="cell" style={cellStyle}>
       {children}
     </div>
   );
 }
 
-export default BoardCellDroppable;
+export default BoardCell;

@@ -1,5 +1,5 @@
 import { gamePieceSize, PIECE_SIZE_UNIT, nArray, compKey } from "../utils";
-import GamePieceDraggable from "./GamePieceDraggable";
+import GamePiece from "./GamePiece";
 import GamePieceShadow from "./GamePieceShadow";
 
 function PlayerDisplay({ player, isP1, isActive }) {
@@ -27,7 +27,7 @@ function PlayerDisplay({ player, isP1, isActive }) {
           nArray(player.numPiecesPerSize).map((pieceIndex) => (
             <div key={compKey(size, pieceIndex)}>
               {hasNPiecesOfSize(size, pieceIndex) ? (
-                <GamePieceDraggable isP1={isP1} size={size} />
+                <GamePiece isP1={isP1} size={size} />
               ) : (
                 <GamePieceShadow size={size} />
               )}

@@ -1,6 +1,6 @@
 import { compKey, findLastIndex } from "../utils";
-import BoardCellDroppable from "./BoardCellDroppable";
-import GamePieceDraggable from "./GamePieceDraggable";
+import BoardCell from "./BoardCell";
+import GamePiece from "./GamePiece";
 
 function BoardDisplay({ game, handleCommand }) {
   function canDragPiece(pName, slot) {
@@ -19,7 +19,7 @@ function BoardDisplay({ game, handleCommand }) {
       {game.board.cells.map((col, x) =>
         col.map((cell, y) => {
           return (
-            <BoardCellDroppable
+            <BoardCell
               key={compKey(x, y)}
               game={game}
               x={x}
@@ -27,12 +27,10 @@ function BoardDisplay({ game, handleCommand }) {
               handleCommand={handleCommand}
             >
               {cell.map((pName, i) => {
-                // const GamePieceComponent = canDragPiece(pName, [x, y, i])
-                //   ? GamePieceDraggable
-                //   : GamePiece;
+                // const GamePieceComponent = canDragPiece(pName, [x, y, i]);
                 return (
                   pName && (
-                    <GamePieceDraggable
+                    <GamePiece
                       key={compKey(x, y, i)}
                       isP1={pName === game.p1.name}
                       size={i}
@@ -41,7 +39,7 @@ function BoardDisplay({ game, handleCommand }) {
                   )
                 );
               })}
-            </BoardCellDroppable>
+            </BoardCell>
           );
         })
       )}
