@@ -9,7 +9,7 @@ import {
 } from "../engine/strategy";
 import Navigation from "../components/Navigation";
 
-const AUTO_PLAY_INTERVAL = 100;
+const AUTO_PLAY_INTERVAL = 10;
 
 function usePlayerHistory() {
   const [wins, setWins] = useState(0);
@@ -133,7 +133,6 @@ function AutoPlayer() {
         p2Name={p2Name}
         p1Wins={p1History.wins}
         p2Wins={p2History.wins}
-        draws={p1History.draws}
       />
       <button onClick={() => setAutoPlay(!autoPlay)}>
         {autoPlay ? "Stop Auto Play" : "Auto Play Games"}
