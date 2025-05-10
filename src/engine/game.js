@@ -8,8 +8,8 @@ function autoPlayGame(p1Name, p2Name, p1Strategy, p2Strategy) {
   let game = createGame(p1Name, p2Name, p1Strategy, p2Strategy);
 
   for (let i = 0; i < MAX_GAME_TURNS; i++) {
-    const { activePlayer: p, board } = game;
-    const command = p.strategy(p, board.cells);
+    const { activePlayer: p } = game;
+    const command = p.strategy(p, game);
     game = playNextCommand(game, command);
 
     if (game.winner) {

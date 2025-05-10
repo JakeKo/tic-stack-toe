@@ -3,7 +3,10 @@ import GameStats from "../components/GameStats";
 import { autoPlayGame, playNextCommand } from "../engine/game";
 import BoardDisplay from "../components/BoardDisplay";
 import PlayerDisplay from "../components/PlayerDisplay";
-import { strategyRandom } from "../engine/strategy";
+import {
+  strategyRandom,
+  strategyRandomAvoidWonCells,
+} from "../engine/strategy";
 
 const AUTO_PLAY_INTERVAL = 100;
 
@@ -65,7 +68,7 @@ function AutoPlayer() {
           p1Name,
           p2Name,
           strategyRandom,
-          strategyRandom
+          strategyRandomAvoidWonCells
         );
 
         if (game.winner === p1Name) {
@@ -108,8 +111,8 @@ function AutoPlayer() {
     if (snapshotIndex < currentGame.turnCount) {
       setSnapshotIndex(snapshotIndex + 1);
     } else {
-      const { activePlayer: p, board } = currentGame;
-      const command = p.strategy(p, board.cells);
+      const { activePlayer: p } = currentGame;
+      const command = p.strategy(p, currentGame);
       const newGame = playNextCommand(currentGame, command);
       setSnapshotIndex(newGame.turnCount);
     }

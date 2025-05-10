@@ -17,11 +17,11 @@ function ManualPlayer() {
   }
 
   useEffect(() => {
-    const { activePlayer: p, board } = game;
+    const { activePlayer: p } = game;
 
     if (!p.isManual) {
       setTimeout(() => {
-        const command = p.strategy(p, board.cells);
+        const command = p.strategy(p, game);
         const newGame = playNextCommand(game, command);
         setGame(newGame);
       }, 1000);

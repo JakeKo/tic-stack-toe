@@ -1,4 +1,4 @@
-import { getAllOpenSlots, getAllPluckablePieces } from "./board";
+import { getAllOpenSlots, getAllPluckablePieces, getCellWinner } from "./board";
 
 function getAllPossibleCommands(cells, playerName, playerInventory) {
   const pluckablePieces = getAllPluckablePieces(cells, playerName);
@@ -30,9 +30,9 @@ function getAllPossibleCommands(cells, playerName, playerInventory) {
   return allPossibleCommands;
 }
 
-function strategyRandom(player, cells) {
+function strategyRandom(player, game) {
   const allPossibleCommands = getAllPossibleCommands(
-    cells,
+    game.board.cells,
     player.name,
     player.inventory
   );
@@ -45,4 +45,28 @@ function strategyRandom(player, cells) {
   }
 }
 
-export { getAllPossibleCommands, strategyRandom };
+function strategyRandomAvoidWonCells(player, game) {
+  const allPossibleCommands = getAllPossibleCommands(
+    game.board.cells,
+    player.name,
+    player.inventory
+  );
+  const commands = allPossibleCommands.filter((command) => {
+    const [x, y] = command.slot;
+    const winner = getCellWinner(game.board.cells, [x, y]);
+
+    return winner !== player.name;
+  });
+  // console.log(allPossibleCommands, commands);
+
+  if (commands.length === 0) {
+    return;
+  } else {
+    const randomIndex = Math.floor(Math.random() * commands.length);
+    const command = commands[randomIndex];
+
+    return command;
+  }
+}
+
+export { getAllPossibleCommands, strategyRandom, strategyRandomAvoidWonCells };
