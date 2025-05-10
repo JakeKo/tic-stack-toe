@@ -5,6 +5,7 @@ import { createGame, playNextCommand } from "../engine/game";
 import { strategyRandom } from "../engine/strategy";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import Navigation from "../components/Navigation";
 
 function ManualPlayer() {
   const [game, setGame] = useState(
@@ -32,6 +33,7 @@ function ManualPlayer() {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="app">
+        <Navigation />
         <div className="game-container">
           <PlayerDisplay
             player={game.p1}

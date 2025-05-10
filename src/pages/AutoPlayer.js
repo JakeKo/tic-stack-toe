@@ -7,6 +7,7 @@ import {
   strategyRandom,
   strategyRandomAvoidWonCells,
 } from "../engine/strategy";
+import Navigation from "../components/Navigation";
 
 const AUTO_PLAY_INTERVAL = 100;
 
@@ -126,6 +127,7 @@ function AutoPlayer() {
 
   return (
     <div className="app">
+      <Navigation />
       <GameStats
         p1Name={p1Name}
         p2Name={p2Name}

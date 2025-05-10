@@ -1,15 +1,10 @@
-import { Link } from "react-router";
 import "./App.css";
+import Navigation from "./components/Navigation";
 
 function App() {
   return (
-    <div>
-      <Link to="/auto">
-        <h1>Auto Player</h1>
-      </Link>
-      <Link to="/manual">
-        <h1>Manual Player</h1>
-      </Link>
+    <div className="app">
+      <Navigation />
     </div>
   );
 }
