@@ -20,9 +20,11 @@ function ManualPlayer() {
     const { activePlayer: p, board } = game;
 
     if (!p.isManual) {
-      const command = p.strategy(p, board.cells);
-      const newGame = playNextCommand(game, command);
-      setGame(newGame);
+      setTimeout(() => {
+        const command = p.strategy(p, board.cells);
+        const newGame = playNextCommand(game, command);
+        setGame(newGame);
+      }, 1000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game.activePlayer]);

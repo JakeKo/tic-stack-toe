@@ -1,5 +1,5 @@
 import { produce } from "immer";
-import { findLastIndex } from "../utils";
+import { findLastIndex, nArray } from "../utils";
 
 function generateEmptyCells(size, slotCount) {
   const cells = [];
@@ -18,46 +18,51 @@ function generateEmptyCells(size, slotCount) {
 }
 
 function calculateWinningLines(size) {
-  const lines = [];
+  const linesSet = new Set();
 
   // Generate winning rows
   for (let j = 0; j < size; j++) {
-    const row = [...Array(size)].map((_, i) => [i, j]);
-    lines.push(row);
+    const row = nArray(size).map((i) => [i, j]);
+    linesSet.add(JSON.stringify(row));
   }
 
   // Generate winning columns
   for (let i = 0; i < size; i++) {
-    const col = [...Array(size)].map((_, j) => [i, j]);
-    lines.push(col);
+    const col = nArray(size).map((j) => [i, j]);
+    linesSet.add(JSON.stringify(col));
   }
 
   // Generate winning diagonals
-  const diagonal1 = [...Array(size)].map((_, i) => [i, i]);
-  const diagonal2 = [...Array(size)].map((_, i) => [i, size - i - 1]);
-  lines.push(diagonal1);
-  lines.push(diagonal2);
+  const diagonal1 = nArray(size).map((i) => [i, i]);
+  const diagonal2 = nArray(size).map((i) => [i, size - i - 1]);
+  linesSet.add(JSON.stringify(diagonal1));
+  linesSet.add(JSON.stringify(diagonal2));
 
-  return lines;
+  return [...linesSet].map((line) => JSON.parse(line));
 }
 
-function isSlotPinned(cells, slot) {
-  const [x, y, i] = slot;
+function getBiggestPiece(cells, [x, y]) {
   const cell = cells[x][y];
+  const biggestPieceIndex = findLastIndex(cell, (slot) => !!slot);
+  const biggestPiecePlayer = cell[biggestPieceIndex];
+  return biggestPiecePlayer
+    ? {
+        player: biggestPiecePlayer,
+        slot: [x, y, biggestPieceIndex],
+      }
+    : undefined;
+}
 
-  for (let j = i + 1; j < cell.length; j++) {
-    if (cell[j]) {
-      return true;
-    }
-  }
-
-  return false;
+// This function checks if a slot is pinned, meaning that there are larger pieces in the same cell
+function isSlotPinned(cells, [x, y, i]) {
+  const cell = cells[x][y];
+  const biggerPieces = cell.slice(i + 1);
+  return biggerPieces.some((piece) => !!piece);
 }
 
 function getCellWinner(cells, [x, y]) {
-  const cell = cells[x][y];
-  const lastIndex = findLastIndex(cell, (slot) => !!slot);
-  return lastIndex === -1 ? undefined : cell[lastIndex];
+  const biggestPiece = getBiggestPiece(cells, [x, y]);
+  return biggestPiece?.player;
 }
 
 function issueCommand(cells, command) {
@@ -243,4 +248,6 @@ export {
   generateEmptyCells,
   toConsoleString,
   toPlaintextString,
+  calculateWinningLines,
+  getBiggestPiece,
 };

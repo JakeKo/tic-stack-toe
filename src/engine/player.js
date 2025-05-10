@@ -1,3 +1,4 @@
+// TODO: Create a player object with numSizes and numPiecesPerSize
 function createPlayer(name, strategy, inventory = [2, 2, 2]) {
   const player = {
     name,
