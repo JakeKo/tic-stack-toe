@@ -41,10 +41,12 @@ function calculateWinningLines(size) {
   return [...linesSet].map((line) => JSON.parse(line));
 }
 
-function getBiggestPiece(cells, [x, y]) {
-  const cell = cells[x][y];
-  const biggestPieceIndex = findLastIndex(cell, (slot) => !!slot);
-  const biggestPiecePlayer = cell[biggestPieceIndex];
+function getBiggestPiece({ cells = undefined, address, cell = undefined }) {
+  const [x, y] = address;
+  const finalCell = cells ? cells[x][y] : cell;
+
+  const biggestPieceIndex = findLastIndex(finalCell, (slot) => !!slot);
+  const biggestPiecePlayer = finalCell[biggestPieceIndex];
   return biggestPiecePlayer
     ? {
         player: biggestPiecePlayer,
@@ -60,9 +62,10 @@ function isSlotPinned(cells, [x, y, i]) {
   return biggerPieces.some((piece) => !!piece);
 }
 
-function getCellWinner(cells, [x, y]) {
-  const biggestPiece = getBiggestPiece(cells, [x, y]);
-  return biggestPiece?.player;
+function getCellWinner({ cells, address, cell }) {
+  const finalCell = cells ? cells[address[0]][address[1]] : cell;
+  const biggestPieceIndex = findLastIndex(finalCell, (slot) => !!slot);
+  return finalCell[biggestPieceIndex];
 }
 
 function issueCommand(cells, command) {
@@ -141,7 +144,7 @@ function checkForWinner(cells) {
   // Iterate over all winning lines and check if there is a winner
   for (let i = 0; i < winningLines.length; i++) {
     const line = winningLines[i];
-    const lineOwners = line.map((cell) => getCellWinner(cells, cell));
+    const lineOwners = line.map((address) => getCellWinner({ cells, address }));
     const uniqueLineOwners = [...new Set(lineOwners)];
 
     // If there is exactly one owner for the line, then that owner is the winner
@@ -176,7 +179,7 @@ function toConsoleString(board) {
   const placeholder = "_".repeat(maxPlayerNameLength);
 
   function getCellColor([x, y]) {
-    const winner = getCellWinner(board.cells, [x, y]);
+    const winner = getCellWinner({ cells: board.cells, address: [x, y] });
     if (winner) {
       return winner === playerNames[0] ? "\u001b[31m" : "\u001b[32m";
     } else {

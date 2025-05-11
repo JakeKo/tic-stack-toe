@@ -19,7 +19,10 @@ function BoardCell({ game, x, y, handleCommand, children }) {
     },
   }));
 
-  const cellWinner = getCellWinner(game.board.cells, [x, y]);
+  const cellWinner = getCellWinner({
+    cells: game.board.cells,
+    address: [x, y],
+  });
   const cellColor = cellColorGenerator(game.p1.name, game.p2.name);
   const cellStyle = {
     gridArea: `${y + 1} / ${x + 1} / span 1 / span 1`,

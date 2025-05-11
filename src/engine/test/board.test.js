@@ -100,19 +100,19 @@ test("calculateWinningLines returns all winning lines for a 1x1 board", () => {
 
 test("getBiggestPiece returns the largest piece in an occupied cell", () => {
   const cells = [[[undefined, "p1", undefined]]];
-  const biggestPiece = getBiggestPiece(cells, [0, 0]);
+  const biggestPiece = getBiggestPiece({ cells, address: [0, 0] });
   expect(biggestPiece).toStrictEqual({ player: "p1", slot: [0, 0, 1] });
 });
 
 test("getBiggestPiece returns the largest piece in a really occupied cell", () => {
   const cells = [[["p2", "p1", "p2"]]];
-  const biggestPiece = getBiggestPiece(cells, [0, 0]);
+  const biggestPiece = getBiggestPiece({ cells, address: [0, 0] });
   expect(biggestPiece).toStrictEqual({ player: "p2", slot: [0, 0, 2] });
 });
 
 test("getBiggestPiece returns no piece for an empty cell", () => {
   const cells = [[[undefined, undefined, undefined]]];
-  const biggestPiece = getBiggestPiece(cells, [0, 0]);
+  const biggestPiece = getBiggestPiece({ cells, address: [0, 0] });
   expect(biggestPiece).toEqual(undefined);
 });
 
@@ -132,20 +132,21 @@ test("isSlotPinned returns false for an empty cell", () => {
 
 test("getCellWinner returns the player in a cell", () => {
   const cells = [[[undefined, "p1", undefined]]];
-  const winner = getCellWinner(cells, [0, 0]);
-  expect(winner).toBe("p1");
+  const winner = getCellWinner({ cells, address: [0, 0] });
+  expect(getCellWinner({ cells, address: [0, 0] })).toBe("p1");
+  expect(getCellWinner({ cell: cells[0][0] })).toBe("p1");
 });
 
 test("getCellWinner returns the winner with multiple players in a cell", () => {
   const cells = [[[undefined, "p1", "p2"]]];
-  const winner = getCellWinner(cells, [0, 0]);
-  expect(winner).toBe("p2");
+  expect(getCellWinner({ cells, address: [0, 0] })).toBe("p2");
+  expect(getCellWinner({ cell: cells[0][0] })).toBe("p2");
 });
 
 test("getCellWinner returns undefined for an empty cell", () => {
   const cells = [[[undefined, undefined, undefined]]];
-  const winner = getCellWinner(cells, [0, 0]);
-  expect(winner).toBe(undefined);
+  expect(getCellWinner({ cells, address: [0, 0] })).toBe(undefined);
+  expect(getCellWinner({ cell: cells[0][0] })).toBe(undefined);
 });
 
 test("accepts valid command from a player", () => {

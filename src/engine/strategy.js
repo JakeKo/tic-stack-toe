@@ -53,11 +53,10 @@ function strategyRandomAvoidWonCells(player, game) {
   );
   const commands = allPossibleCommands.filter((command) => {
     const [x, y] = command.slot;
-    const winner = getCellWinner(game.board.cells, [x, y]);
+    const winner = getCellWinner({ cells: game.board.cells, address: [x, y] });
 
     return winner !== player.name;
   });
-  // console.log(allPossibleCommands, commands);
 
   if (commands.length === 0) {
     return;
