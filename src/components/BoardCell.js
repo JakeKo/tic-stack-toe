@@ -1,37 +1,45 @@
 import { useDrop } from "react-dnd";
 import { getCellWinner } from "../engine/board";
-import { cellColorGenerator } from "../utils";
+import { compKey } from "../utils";
+import GamePiece from "./GamePiece";
+import { useBoardCellColor } from "../store/game";
 
-function BoardCell({ game, x, y, handleCommand, children }) {
+function BoardCell({ cell, address, handleDrop }) {
+  const [x, y] = address;
+  const cellWinner = getCellWinner({ cell });
+  const cellColor = useBoardCellColor(cellWinner);
+  const cellStyle = {
+    gridArea: `${y + 1} / ${x + 1} / span 1 / span 1`,
+    backgroundColor: cellColor,
+  };
+
   const [, drop] = useDrop(() => ({
     accept: "game-piece",
     drop: (item) => {
       const { size, cell } = item;
-      const slot = [x, y, size];
-      const player = game.activePlayer.name;
-      const command = { player, slot };
+      const payload = {
+        slot: [x, y, size],
+        pluck: cell ? [...cell, size] : undefined,
+      };
 
-      if (cell) {
-        command.pluck = [...cell, size];
-      }
-
-      handleCommand(command);
+      handleDrop(payload);
     },
   }));
 
-  const cellWinner = getCellWinner({
-    cells: game.board.cells,
-    address: [x, y],
-  });
-  const cellColor = cellColorGenerator(game.p1.name, game.p2.name);
-  const cellStyle = {
-    gridArea: `${y + 1} / ${x + 1} / span 1 / span 1`,
-    backgroundColor: cellColor(cellWinner),
-  };
-
   return (
     <div ref={drop} className="cell" style={cellStyle}>
-      {children}
+      {cell.map((playerName, i) => {
+        return (
+          playerName && (
+            <GamePiece
+              key={compKey(x, y, i)}
+              playerName={playerName}
+              size={i}
+              cell={[x, y]}
+            />
+          )
+        );
+      })}
     </div>
   );
 }

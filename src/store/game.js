@@ -59,6 +59,18 @@ function useGamePieceColor(playerName) {
   });
 }
 
+function useBoardCellColor(playerName) {
+  return useSelector((state) => {
+    if (playerName === state.game.p1.name) {
+      return "rgba(0, 255, 0, 0.2)";
+    } else if (playerName === state.game.p2.name) {
+      return "rgba(255, 0, 0, 0.2)";
+    }
+
+    return "white";
+  });
+}
+
 export const { startGame, setGame, resetGame } = gameSlice.actions;
-export { useGamePieceColor };
+export { useGamePieceColor, useBoardCellColor };
 export default gameSlice.reducer;
