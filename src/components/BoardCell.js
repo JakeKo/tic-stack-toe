@@ -2,9 +2,10 @@ import { useDrop } from "react-dnd";
 import { getCellWinner } from "../engine/board";
 import { compKey } from "../utils";
 import GamePiece from "./GamePiece";
-import { useBoardCellColor } from "../store/game";
+import { issueCommand, useBoardCellColor } from "../store/game";
+import { useDispatch } from "react-redux";
 
-function BoardCell({ cell, address, handleDrop }) {
+function BoardCell({ cell, address }) {
   const [x, y] = address;
   const cellWinner = getCellWinner({ cell });
   const cellColor = useBoardCellColor(cellWinner);
@@ -12,17 +13,19 @@ function BoardCell({ cell, address, handleDrop }) {
     gridArea: `${y + 1} / ${x + 1} / span 1 / span 1`,
     backgroundColor: cellColor,
   };
+  const dispatch = useDispatch();
 
   const [, drop] = useDrop(() => ({
     accept: "game-piece",
     drop: (item) => {
-      const { size, cell } = item;
-      const payload = {
+      const { size, address, playerName } = item;
+      const command = {
+        player: playerName,
         slot: [x, y, size],
-        pluck: cell ? [...cell, size] : undefined,
+        pluck: address ? [...address, size] : undefined,
       };
 
-      handleDrop(payload);
+      dispatch(issueCommand({ command }));
     },
   }));
 
@@ -35,7 +38,7 @@ function BoardCell({ cell, address, handleDrop }) {
               key={compKey(x, y, i)}
               playerName={playerName}
               size={i}
-              cell={[x, y]}
+              address={address}
             />
           )
         );

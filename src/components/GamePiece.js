@@ -2,12 +2,12 @@ import { useDrag } from "react-dnd";
 import { PIECE_SIZE_UNIT, gamePieceSize } from "../utils";
 import { useGamePieceColor } from "../store/game";
 
-function GamePiece({ playerName, size, cell }) {
+function GamePiece({ playerName, size, address }) {
   const gamePieceColor = useGamePieceColor(playerName);
 
   const [, dragRef] = useDrag({
     type: "game-piece",
-    item: { size, cell },
+    item: { size, address, playerName },
   });
 
   return (
