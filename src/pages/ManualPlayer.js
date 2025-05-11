@@ -3,8 +3,9 @@ import PlayerDisplay from "../components/PlayerDisplay";
 import BoardDisplay from "../components/BoardDisplay";
 import { playNextCommand } from "../engine/game";
 import Navigation from "../components/Navigation";
-import { setGame, startGame, useGame } from "../store/game";
+import { setGame, useGame } from "../store/game";
 import { useDispatch } from "react-redux";
+import GameDialogs from "../components/GameDialogs";
 
 function ManualPlayer() {
   const game = useGame();
@@ -33,16 +34,7 @@ function ManualPlayer() {
             isActive={game.activePlayer?.name === game.p1.name}
           />
         </div>
-        {!game.active && (
-          <div className="start-game-button-container">
-            <button
-              className="start-game-button"
-              onClick={() => dispatch(startGame())}
-            >
-              Start
-            </button>
-          </div>
-        )}
+        <GameDialogs />
         <BoardDisplay cells={game.board.cells} />
         <div className="player-display-container" style={{ gridArea: "1 / 3" }}>
           <PlayerDisplay

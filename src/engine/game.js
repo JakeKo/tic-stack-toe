@@ -27,8 +27,16 @@ function makeGameSnapshot(game, command) {
   return {
     p1,
     p2,
-    activePlayer: isP1(game.activePlayer, game) ? p1 : p2,
-    inactivePlayer: isP1(game.inactivePlayer, game) ? p1 : p2,
+    activePlayer: game.activePlayer
+      ? isP1(game.activePlayer, game)
+        ? p1
+        : p2
+      : undefined,
+    inactivePlayer: game.inactivePlayer
+      ? isP1(game.inactivePlayer, game)
+        ? p1
+        : p2
+      : undefined,
     board: JSON.parse(JSON.stringify(game.board)),
     command,
   };
@@ -69,6 +77,11 @@ function playNextCommand(game, cmd) {
 
     draftGame.turnCount++;
     draftGame.winner = checkForWinner(newCells);
+    if (draftGame.winner) {
+      draftGame.activePlayer = undefined;
+      draftGame.inactivePlayer = undefined;
+    }
+
     draftGame.snapshots.push(makeGameSnapshot(current(draftGame), cmd));
 
     const swapper = draftGame.activePlayer;
