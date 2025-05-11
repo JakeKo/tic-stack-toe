@@ -26,17 +26,30 @@ function ManualPlayer() {
   return (
     <div className="app">
       <Navigation />
-      <button onClick={() => dispatch(startGame())}>Start</button>
       <div className="game-container">
-        <PlayerDisplay
-          player={game.p1}
-          isActive={game.activePlayer?.name === game.p1.name}
-        />
+        <div className="player-display-container" style={{ gridArea: "1 / 1" }}>
+          <PlayerDisplay
+            player={game.p1}
+            isActive={game.activePlayer?.name === game.p1.name}
+          />
+        </div>
+        {!game.active && (
+          <div className="start-game-button-container">
+            <button
+              className="start-game-button"
+              onClick={() => dispatch(startGame())}
+            >
+              Start
+            </button>
+          </div>
+        )}
         <BoardDisplay cells={game.board.cells} />
-        <PlayerDisplay
-          player={game.p2}
-          isActive={game.activePlayer?.name === game.p2.name}
-        />
+        <div className="player-display-container" style={{ gridArea: "1 / 3" }}>
+          <PlayerDisplay
+            player={game.p2}
+            isActive={game.activePlayer?.name === game.p2.name}
+          />
+        </div>
       </div>
     </div>
   );
