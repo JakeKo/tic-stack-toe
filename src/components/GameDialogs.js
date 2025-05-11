@@ -1,9 +1,7 @@
-import { useDispatch } from "react-redux";
-import { resetGame, startGame, useGame } from "../store/game";
+import { useGame } from "../store/game";
 
 function GameDialogs() {
-  const game = useGame();
-  const dispatch = useDispatch();
+  const { game, startGame, resetGame } = useGame();
 
   const showStartButton = !game.active;
   const showGameOverDialog = game.winner;
@@ -13,17 +11,14 @@ function GameDialogs() {
     showDialog && (
       <div className="game-dialog-container">
         {showStartButton && (
-          <button className="game-button" onClick={() => dispatch(startGame())}>
+          <button className="game-button" onClick={() => startGame()}>
             Start
           </button>
         )}
         {showGameOverDialog && (
           <div className="game-over-dialog">
             <h2>{game.winner} wins!</h2>
-            <button
-              className="game-button"
-              onClick={() => dispatch(resetGame())}
-            >
+            <button className="game-button" onClick={() => resetGame()}>
               Play Again
             </button>
           </div>

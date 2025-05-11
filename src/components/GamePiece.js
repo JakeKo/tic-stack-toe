@@ -3,7 +3,7 @@ import { PIECE_SIZE_UNIT, gamePieceSize } from "../utils";
 import { useGame, useGamePieceColor } from "../store/game";
 
 function GamePiece({ playerName, size, address }) {
-  const game = useGame();
+  const { game } = useGame();
   const gamePieceColor = useGamePieceColor(playerName);
   const canDrag = playerName === game.activePlayer?.name;
 

@@ -2,23 +2,25 @@ import { createSlice } from "@reduxjs/toolkit";
 import { createBoard } from "../engine/board";
 import { createPlayer } from "../engine/player";
 import { makeGameSnapshot, playNextCommand } from "../engine/game";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-const initialState = {
-  active: false,
-  p1: createPlayer("P1"),
-  p2: createPlayer("P2"),
-  activePlayer: undefined,
-  inactivePlayer: undefined,
-  board: createBoard(),
-  turnCount: 0,
-  snapshots: [],
-  winner: undefined,
-};
+function initialState() {
+  return {
+    active: false,
+    p1: createPlayer("P1"),
+    p2: createPlayer("P2"),
+    activePlayer: undefined,
+    inactivePlayer: undefined,
+    board: createBoard(),
+    turnCount: 0,
+    snapshots: [],
+    winner: undefined,
+  };
+}
 
 export const gameSlice = createSlice({
   name: "game",
-  initialState,
+  initialState: initialState(),
   reducers: {
     startGame: (state) => {
       state.active = true;
@@ -35,21 +37,22 @@ export const gameSlice = createSlice({
       Object.assign(state, newGame);
     },
     resetGame: (state) => {
-      state.active = false;
-      state.p1 = createPlayer("P1");
-      state.p2 = createPlayer("P2");
-      state.activePlayer = undefined;
-      state.inactivePlayer = undefined;
-      state.board = createBoard();
-      state.turnCount = 0;
-      state.snapshots = [];
-      state.winner = undefined;
+      Object.assign(state, initialState());
     },
   },
 });
 
 function useGame() {
-  return useSelector((state) => state.game);
+  const dispatch = useDispatch();
+  const game = useSelector((state) => state.game);
+  const actions = Object.fromEntries(
+    Object.entries(gameSlice.actions).map(([key, action]) => [
+      key,
+      (...args) => dispatch(action(...args)),
+    ])
+  );
+
+  return { game, ...actions };
 }
 
 function useGamePieceColor(playerName) {
@@ -76,7 +79,5 @@ function useBoardCellColor(playerName) {
   });
 }
 
-export const { startGame, setGame, resetGame, issueCommand } =
-  gameSlice.actions;
 export { useGame, useGamePieceColor, useBoardCellColor };
 export default gameSlice.reducer;

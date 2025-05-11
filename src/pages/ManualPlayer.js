@@ -3,13 +3,11 @@ import PlayerDisplay from "../components/PlayerDisplay";
 import BoardDisplay from "../components/BoardDisplay";
 import { playNextCommand } from "../engine/game";
 import Navigation from "../components/Navigation";
-import { setGame, useGame } from "../store/game";
-import { useDispatch } from "react-redux";
+import { useGame } from "../store/game";
 import GameDialogs from "../components/GameDialogs";
 
 function ManualPlayer() {
-  const game = useGame();
-  const dispatch = useDispatch();
+  const { game, setGame } = useGame();
 
   useEffect(() => {
     const { activePlayer: p } = game;
@@ -18,7 +16,7 @@ function ManualPlayer() {
       setTimeout(() => {
         const command = p.strategy(p, game);
         const newGame = playNextCommand(game, command);
-        dispatch(setGame(newGame));
+        setGame(newGame);
       }, 1000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
