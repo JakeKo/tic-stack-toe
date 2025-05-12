@@ -68,4 +68,15 @@ function strategyRandomAvoidWonCells(player, game) {
   }
 }
 
-export { getAllPossibleCommands, strategyRandom, strategyRandomAvoidWonCells };
+const STRATEGIES = {
+  MANUAL: "manual",
+  RANDOM: "random",
+  RANDOM_AVOID_WON_CELLS: "randomAvoidWonCells",
+};
+const STRATEGY_FUNCS = {
+  [STRATEGIES.MANUAL]: () => {},
+  [STRATEGIES.RANDOM]: strategyRandom,
+  [STRATEGIES.RANDOM_AVOID_WON_CELLS]: strategyRandomAvoidWonCells,
+};
+
+export { getAllPossibleCommands, STRATEGY_FUNCS, STRATEGIES };

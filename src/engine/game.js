@@ -1,6 +1,6 @@
 import { current, produce } from "immer";
 import { checkForWinner, createBoard, issueCommand } from "./board";
-import { createPlayer } from "./player";
+import { createPlayer, getCommand } from "./player";
 
 const MAX_GAME_TURNS = 100;
 
@@ -9,7 +9,7 @@ function autoPlayGame(p1Name, p2Name, p1Strategy, p2Strategy) {
 
   for (let i = 0; i < MAX_GAME_TURNS; i++) {
     const { activePlayer: p } = game;
-    const command = p.strategy(p, game);
+    const command = getCommand(p, game);
     game = playNextCommand(game, command);
 
     if (game.winner) {

@@ -3,12 +3,13 @@ import { createBoard } from "../engine/board";
 import { createPlayer } from "../engine/player";
 import { makeGameSnapshot, playNextCommand } from "../engine/game";
 import { useDispatch, useSelector } from "react-redux";
+import { STRATEGIES } from "../engine/strategy";
 
 function initialState() {
   return {
     active: false,
     p1: createPlayer("P1"),
-    p2: createPlayer("P2"),
+    p2: createPlayer("P2", STRATEGIES.RANDOM_AVOID_WON_CELLS),
     activePlayer: undefined,
     inactivePlayer: undefined,
     board: createBoard(),

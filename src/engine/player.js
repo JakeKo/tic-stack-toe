@@ -1,8 +1,14 @@
+import { STRATEGIES, STRATEGY_FUNCS } from "./strategy";
+
 // TODO: Create a player object with numSizes and numPiecesPerSize
-function createPlayer(name, strategy, inventory = [2, 2, 2]) {
+function createPlayer(
+  name,
+  strategy = STRATEGIES.MANUAL,
+  inventory = [2, 2, 2]
+) {
   const player = {
     name,
-    isManual: !strategy,
+    isManual: strategy === STRATEGIES.MANUAL,
     inventory,
     strategy,
     turnCount: 0,
@@ -14,4 +20,9 @@ function createPlayer(name, strategy, inventory = [2, 2, 2]) {
   return player;
 }
 
-export { createPlayer };
+function getCommand(player, game) {
+  const strategy = STRATEGY_FUNCS[player.strategy];
+  return strategy(player, game);
+}
+
+export { createPlayer, getCommand };

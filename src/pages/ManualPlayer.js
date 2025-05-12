@@ -1,22 +1,21 @@
 import { useEffect } from "react";
 import PlayerDisplay from "../components/PlayerDisplay";
 import BoardDisplay from "../components/BoardDisplay";
-import { playNextCommand } from "../engine/game";
 import Navigation from "../components/Navigation";
 import { useGame } from "../store/game";
 import GameDialogs from "../components/GameDialogs";
+import { getCommand } from "../engine/player";
 
 function ManualPlayer() {
-  const { game, setGame } = useGame();
+  const { game, issueCommand } = useGame();
 
   useEffect(() => {
     const { activePlayer: p } = game;
 
     if (p && !p.isManual) {
       setTimeout(() => {
-        const command = p.strategy(p, game);
-        const newGame = playNextCommand(game, command);
-        setGame(newGame);
+        const command = getCommand(p, game);
+        issueCommand({ command });
       }, 1000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
