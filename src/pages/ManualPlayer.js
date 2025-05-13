@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import PlayerDisplay from "../components/PlayerDisplay";
 import BoardDisplay from "../components/BoardDisplay";
-import Navigation from "../components/Navigation";
 import { useGame } from "../store/game";
 import GameDialogs from "../components/GameDialogs";
 import { getCommand } from "../engine/player";
+import Layout from "./Layout";
 
 function ManualPlayer() {
   const { game, issueCommand } = useGame();
@@ -22,8 +22,7 @@ function ManualPlayer() {
   }, [game.activePlayer]);
 
   return (
-    <div className="app">
-      <Navigation />
+    <Layout>
       <div className="game-container">
         <div className="player-display-container" style={{ gridArea: "1 / 1" }}>
           <PlayerDisplay
@@ -40,7 +39,7 @@ function ManualPlayer() {
           />
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
 

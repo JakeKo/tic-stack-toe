@@ -4,8 +4,8 @@ import { autoPlayGame, playNextCommand } from "../engine/game";
 import BoardDisplay from "../components/BoardDisplay";
 import PlayerDisplay from "../components/PlayerDisplay";
 import { STRATEGIES } from "../engine/strategy";
-import Navigation from "../components/Navigation";
 import { getCommand } from "../engine/player";
+import Layout from "./Layout";
 
 const AUTO_PLAY_INTERVAL = 10;
 
@@ -124,8 +124,7 @@ function AutoPlayer() {
   }
 
   return (
-    <div className="app">
-      <Navigation />
+    <Layout>
       <GameStats
         p1Name={p1Name}
         p2Name={p2Name}
@@ -159,7 +158,7 @@ function AutoPlayer() {
           <PlayerDisplay player={currentSnapshot.p2} />
         </div>
       )}
-    </div>
+    </Layout>
   );
 }
 
