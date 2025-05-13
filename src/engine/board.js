@@ -68,6 +68,10 @@ function getCellWinner({ cells, address, cell }) {
   return finalCell[biggestPieceIndex];
 }
 
+function BoardError(message) {
+  return { error: true, message };
+}
+
 function issueCommand(cells, command) {
   const { player, pluck, slot } = command;
   const [placeX, placeY, placeI] = slot;
@@ -78,21 +82,21 @@ function issueCommand(cells, command) {
     const pluckCell = cells[pluckX][pluckY];
 
     if (pluckI !== placeI) {
-      throw new Error(`Trying to place the wrong piece in slot ${slot}`);
+      return BoardError(`Trying to place the wrong piece in slot ${slot}`);
     } else if (isSlotPinned(cells, pluck)) {
-      throw new Error(`Piece plucked from pinned slot ${pluck}`);
+      return BoardError(`Piece plucked from pinned slot ${slot}`);
     } else if (pluckCell[pluckI] !== player) {
-      throw new Error(`Piece plucked from the wrong player ${pluck}`);
+      return BoardError(`Piece plucked from the wrong player ${pluck}`);
     }
   }
 
   if (cell[placeI]) {
-    throw new Error(`Piece collision in slot ${slot}`);
+    return BoardError(`Slot ${slot} is already occupied`);
   }
 
   // Checks for any larger pieces in the current cell and rejects the move
   if (isSlotPinned(cells, slot)) {
-    throw new Error(`Piece placed in a pinned slot ${slot}`);
+    return BoardError(`Slot ${slot} is pinned`);
   }
 
   return produce(cells, (draftCells) => {

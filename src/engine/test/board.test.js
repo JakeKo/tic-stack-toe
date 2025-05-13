@@ -152,24 +152,26 @@ test("getCellWinner returns undefined for an empty cell", () => {
 test("accepts valid command from a player", () => {
   const board = createBoard();
   const command = { player: "p1", slot: [0, 0, 1] };
-  let newCells;
+  const newCells = issueCommand(board.cells, command);
 
-  expect(() => (newCells = issueCommand(board.cells, command))).not.toThrow();
+  expect(newCells.error).toBe(undefined);
   expect(newCells[0][0]).toStrictEqual([undefined, "p1", undefined]);
 });
 
 test("detects collisions with an existing piece", () => {
   const board = createBoard(3, 3, [{ player: "p1", slot: [0, 0, 1] }]);
   const command = { player: "p2", slot: [0, 0, 1] };
+  const newCells = issueCommand(board.cells, command);
 
-  expect(() => issueCommand(board.cells, command)).toThrow();
+  expect(newCells.error).toBe(true);
 });
 
 test("prevents a player placing a piece in a pinned slot", () => {
   const board = createBoard(3, 3, [{ player: "p1", slot: [0, 0, 1] }]);
   const command = { player: "p2", slot: [0, 0, 0] };
+  const newCells = issueCommand(board.cells, command);
 
-  expect(() => issueCommand(board.cells, command)).toThrow();
+  expect(newCells.error).toBe(true);
 });
 
 test("getAllOpenSlots gets all slots on an empty board", () => {
@@ -270,9 +272,9 @@ test("gets all pluckable pieces for a player on an occupied board", () => {
 test("lets a player pluck a piece", () => {
   const board = createBoard(3, 3, [{ player: "p1", slot: [0, 0, 0] }]);
   const command = { player: "p1", pluck: [0, 0, 0], slot: [1, 0, 0] };
-  let newCells;
+  const newCells = issueCommand(board.cells, command);
 
-  expect(() => (newCells = issueCommand(board.cells, command))).not.toThrow();
+  expect(newCells.error).toBe(undefined);
   expect(newCells[0][0]).toStrictEqual([undefined, undefined, undefined]);
   expect(newCells[1][0]).toStrictEqual(["p1", undefined, undefined]);
 });
@@ -280,22 +282,25 @@ test("lets a player pluck a piece", () => {
 test("prevents a player plucking a piece that is not theirs", () => {
   const board = createBoard(3, 3, [{ player: "p1", slot: [0, 0, 0] }]);
   const command = { player: "p2", pluck: [0, 0, 0], slot: [1, 0, 0] };
+  const newCells = issueCommand(board.cells, command);
 
-  expect(() => issueCommand(board.cells, command)).toThrow();
+  expect(newCells.error).toBe(true);
 });
 
 test("prevents a player plucking a piece and placing it in the wrong slot", () => {
   const board = createBoard(3, 3, [{ player: "p1", slot: [0, 0, 0] }]);
   const command = { player: "p1", pluck: [0, 0, 0], slot: [0, 0, 1] };
+  const newCells = issueCommand(board.cells, command);
 
-  expect(() => issueCommand(board.cells, command)).toThrow();
+  expect(newCells.error).toBe(true);
 });
 
 test("prevents a player plucking a piece that doesn't exist", () => {
   const board = createBoard(3, 3, [{ player: "p1", slot: [0, 0, 0] }]);
   const command = { player: "p1", pluck: [0, 0, 1], slot: [0, 0, 2] };
+  const newCells = issueCommand(board.cells, command);
 
-  expect(() => issueCommand(board.cells, command)).toThrow();
+  expect(newCells.error).toBe(true);
 });
 
 test("prevents a player plucking a piece that is pinned", () => {
@@ -304,8 +309,9 @@ test("prevents a player plucking a piece that is pinned", () => {
     { player: "p2", slot: [0, 0, 1] },
   ]);
   const command = { player: "p1", pluck: [0, 0, 0], slot: [1, 0, 0] };
+  const newCells = issueCommand(board.cells, command);
 
-  expect(() => issueCommand(board.cells, command)).toThrow();
+  expect(newCells.error).toBe(true);
 });
 
 test("prevents a player plucking a piece into a pinned slot", () => {
@@ -314,8 +320,9 @@ test("prevents a player plucking a piece into a pinned slot", () => {
     { player: "p2", slot: [1, 0, 1] },
   ]);
   const command = { player: "p1", pluck: [0, 0, 0], slot: [1, 0, 0] };
+  const newCells = issueCommand(board.cells, command);
 
-  expect(() => issueCommand(board.cells, command)).toThrow();
+  expect(newCells.error).toBe(true);
 });
 
 test("checks for winner on an empty board", () => {

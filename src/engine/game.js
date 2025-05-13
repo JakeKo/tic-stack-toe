@@ -56,6 +56,11 @@ function playNextCommand(game, cmd) {
   }
 
   const newCells = issueCommand(game.board.cells, cmd);
+  if (newCells.error) {
+    console.error(newCells.message);
+    return game;
+  }
+
   const newGame = produce(game, (draftGame) => {
     draftGame.board.cells = newCells;
     const newActivePlayer = produce(game.activePlayer, (activePlayer) => {
