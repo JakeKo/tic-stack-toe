@@ -40,6 +40,14 @@ export const gameSlice = createSlice({
     resetGame: (state) => {
       Object.assign(state, initialState());
     },
+    configurePlayerDetails: (state, action) => {
+      const name = action.payload.name;
+      if (state.p1.name === name) {
+        Object.assign(state.p1, action.payload);
+      } else if (state.p2.name === name) {
+        Object.assign(state.p2, action.payload);
+      }
+    },
   },
 });
 

@@ -7,7 +7,7 @@ import { getCommand } from "../engine/player";
 import Layout from "./Layout";
 
 function ManualPlayer() {
-  const { game, issueCommand } = useGame();
+  const { game, issueCommand, configurePlayerDetails } = useGame();
 
   useEffect(() => {
     const { activePlayer: p } = game;
@@ -28,6 +28,8 @@ function ManualPlayer() {
           <PlayerDisplay
             player={game.p1}
             isActive={game.activePlayer?.name === game.p1.name}
+            isConfiguring={!game.active}
+            configurePlayerDetails={configurePlayerDetails}
           />
         </div>
         <GameDialogs />
@@ -36,6 +38,8 @@ function ManualPlayer() {
           <PlayerDisplay
             player={game.p2}
             isActive={game.activePlayer?.name === game.p2.name}
+            isConfiguring={!game.active}
+            configurePlayerDetails={configurePlayerDetails}
           />
         </div>
       </div>
