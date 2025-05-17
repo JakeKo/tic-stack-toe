@@ -14,6 +14,7 @@ function ManualPlayer() {
 
     if (p && !p.isManual) {
       setTimeout(() => {
+        console.log(p);
         const command = getCommand(p, game);
         issueCommand({ command });
       }, 1000);

@@ -42,6 +42,10 @@ export const gameSlice = createSlice({
     },
     configurePlayerDetails: (state, action) => {
       const name = action.payload.name;
+      if (action.payload.strategy === STRATEGIES.MANUAL) {
+        action.payload.isManual = true;
+      }
+
       if (state.p1.name === name) {
         Object.assign(state.p1, action.payload);
       } else if (state.p2.name === name) {
