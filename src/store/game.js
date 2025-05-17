@@ -9,7 +9,7 @@ function initialState() {
   return {
     active: false,
     p1: createPlayer("P1"),
-    p2: createPlayer("P2", STRATEGIES.RANDOM_AVOID_WON_CELLS),
+    p2: createPlayer("P2"),
     activePlayer: undefined,
     inactivePlayer: undefined,
     board: createBoard(),

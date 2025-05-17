@@ -25,7 +25,7 @@ function PlayerDisplay({
     <div className={`player-display ${isActive ? "active" : ""}`}>
       <h1 className="player-name">{name}</h1>
       <select
-        className="player-select"
+        className="player-strategy"
         value={player.strategy}
         onChange={(e) =>
           configurePlayerDetails({ name, strategy: e.target.value })
