@@ -131,30 +131,32 @@ function AutoPlayer() {
         p1Wins={p1History.wins}
         p2Wins={p2History.wins}
       />
-      <button onClick={() => setAutoPlay(!autoPlay)}>
-        {autoPlay ? "Stop Auto Play" : "Auto Play Games"}
-      </button>
-      <button onClick={previousGame} disabled={gameIndex <= 0}>
-        {"<<"}
-      </button>
-      <button onClick={nextGame} disabled={gameIndex >= games.length - 1}>
-        {">>"}
-      </button>
-      {gameIndex} / {games.length} ({snapshotIndex})
-      <br />
-      <button onClick={previousSnapshot} disabled={snapshotIndex <= 0}>
-        {"<<"}
-      </button>
-      <button
-        onClick={nextSnapshot}
-        disabled={snapshotIndex >= currentGame?.turnCount}
-      >
-        {">>"}
-      </button>
+      <div className="auto-play-controls">
+        <button onClick={() => setAutoPlay(!autoPlay)}>
+          {autoPlay ? "Stop Auto Play" : "Auto Play Games"}
+        </button>
+        <button onClick={previousGame} disabled={gameIndex <= 0}>
+          {"<<"}
+        </button>
+        <button onClick={nextGame} disabled={gameIndex >= games.length - 1}>
+          {">>"}
+        </button>
+        {gameIndex} / {games.length} ({snapshotIndex})
+        <br />
+        <button onClick={previousSnapshot} disabled={snapshotIndex <= 0}>
+          {"<<"}
+        </button>
+        <button
+          onClick={nextSnapshot}
+          disabled={snapshotIndex >= currentGame?.turnCount}
+        >
+          {">>"}
+        </button>
+      </div>
       {currentSnapshot && (
         <div className="game-container">
           <PlayerDisplay player={currentSnapshot.p1} />
-          <BoardDisplay game={currentSnapshot} />
+          <BoardDisplay cells={currentSnapshot.board.cells} />
           <PlayerDisplay player={currentSnapshot.p2} />
         </div>
       )}
