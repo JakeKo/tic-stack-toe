@@ -28,12 +28,12 @@ function makeGameSnapshot(game, command) {
     p1,
     p2,
     activePlayer: game.activePlayer
-      ? isP1(game.activePlayer, game)
+      ? game.activePlayer.name === game.p1.name
         ? p1
         : p2
       : undefined,
     inactivePlayer: game.inactivePlayer
-      ? isP1(game.inactivePlayer, game)
+      ? game.inactivePlayer.name === game.p1.name
         ? p1
         : p2
       : undefined,
@@ -42,14 +42,8 @@ function makeGameSnapshot(game, command) {
   };
 }
 
-function isP1(player, game) {
-  return player.name === game.p1.name;
-}
-
-function isP2(player, game) {
-  return player.name === game.p2.name;
-}
-
+// Given a command, play it on the board and update player inventories to match
+// This is *the* workhorse function that plays a turn and updates game state
 function playNextCommand(game, cmd) {
   if (!game || game.winner) {
     return game;
@@ -74,9 +68,9 @@ function playNextCommand(game, cmd) {
     });
 
     draftGame.activePlayer = newActivePlayer;
-    if (isP1(newActivePlayer, draftGame)) {
+    if (newActivePlayer.name === draftGame.p1.name) {
       draftGame.p1 = newActivePlayer;
-    } else if (isP2(newActivePlayer, draftGame)) {
+    } else if (newActivePlayer.name === draftGame.p2.name) {
       draftGame.p2 = newActivePlayer;
     }
 
@@ -116,11 +110,4 @@ function createGame(p1Name, p2Name, p1Strategy, p2Strategy) {
   return game;
 }
 
-export {
-  createGame,
-  autoPlayGame,
-  playNextCommand,
-  makeGameSnapshot,
-  isP1,
-  isP2,
-};
+export { createGame, autoPlayGame, playNextCommand, makeGameSnapshot };
