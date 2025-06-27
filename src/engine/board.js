@@ -1,5 +1,5 @@
 import { produce } from "immer";
-import { findLastIndex, nArray } from "../utils";
+import { findLastIndex, nArray } from "./utils";
 
 function generateEmptyCells(size, slotCount) {
   const cells = [];

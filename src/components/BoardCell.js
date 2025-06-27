@@ -1,6 +1,6 @@
 import { useDrop } from "react-dnd";
 import { getCellWinner } from "../engine/board";
-import { compKey } from "../utils";
+import { compKey } from "../engine/utils";
 import GamePiece from "./GamePiece";
 import { useBoardCellColor, useGame } from "../store/game";
 

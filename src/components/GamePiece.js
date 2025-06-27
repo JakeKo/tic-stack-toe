@@ -1,5 +1,5 @@
 import { useDrag } from "react-dnd";
-import { PIECE_SIZE_UNIT, gamePieceSize } from "../utils";
+import { PIECE_SIZE_UNIT, gamePieceSize } from "../engine/utils";
 import { useGame, useGamePieceColor } from "../store/game";
 
 function GamePiece({ playerName, size, address }) {

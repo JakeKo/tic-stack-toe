@@ -1,4 +1,4 @@
-import { gamePieceSize } from "../utils";
+import { gamePieceSize } from "../engine/utils";
 
 function GamePieceShadow({ size }) {
   return (

@@ -1,4 +1,4 @@
-import { compKey } from "../utils";
+import { compKey } from "../engine/utils";
 import BoardCell from "./BoardCell";
 
 function BoardDisplay({ cells }) {

@@ -1,5 +1,5 @@
 import { STRATEGIES } from "../engine/strategy";
-import { gamePieceSize, nArray, compKey } from "../utils";
+import { gamePieceSize, nArray, compKey } from "../engine/utils";
 import GamePiece from "./GamePiece";
 import GamePieceShadow from "./GamePieceShadow";
 
