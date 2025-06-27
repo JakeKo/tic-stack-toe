@@ -1,27 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { createBoard } from "../engine/board";
-import { createPlayer } from "../engine/player";
-import { makeGameSnapshot, playNextCommand } from "../engine/game";
+import { createGame, makeGameSnapshot, playNextCommand } from "../engine/game";
 import { useDispatch, useSelector } from "react-redux";
 import { STRATEGIES } from "../engine/strategy";
 
-function initialState() {
-  return {
-    active: false,
-    p1: createPlayer("P1"),
-    p2: createPlayer("P2"),
-    activePlayer: undefined,
-    inactivePlayer: undefined,
-    board: createBoard(),
-    turnCount: 0,
-    snapshots: [],
-    winner: undefined,
-  };
-}
-
 export const gameSlice = createSlice({
   name: "game",
-  initialState: initialState(),
+  initialState: createGame(),
   reducers: {
     startGame: (state) => {
       state.active = true;
@@ -38,7 +22,7 @@ export const gameSlice = createSlice({
       Object.assign(state, newGame);
     },
     resetGame: (state) => {
-      Object.assign(state, initialState());
+      Object.assign(state, createGame());
     },
     configurePlayerDetails: (state, action) => {
       const name = action.payload.name;

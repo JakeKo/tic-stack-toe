@@ -91,23 +91,18 @@ function playNextCommand(game, cmd) {
   return newGame;
 }
 
-function createGame(p1Name, p2Name, p1Strategy, p2Strategy) {
-  const board = createBoard();
-  const p1 = createPlayer(p1Name, p1Strategy);
-  const p2 = createPlayer(p2Name, p2Strategy);
-
-  const game = {
-    p1,
-    p2,
-    activePlayer: p1,
-    inactivePlayer: p2,
-    board,
+function createGame(p1Name = "P1", p2Name = "P2", p1Strategy, p2Strategy) {
+  return {
+    active: false,
+    p1: createPlayer(p1Name, p1Strategy),
+    p2: createPlayer(p2Name, p2Strategy),
+    activePlayer: undefined,
+    inactivePlayer: undefined,
+    board: createBoard(),
     turnCount: 0,
     snapshots: [],
     winner: undefined,
   };
-  game.snapshots.push(makeGameSnapshot(game));
-  return game;
 }
 
 export { createGame, autoPlayGame, playNextCommand, makeGameSnapshot };
