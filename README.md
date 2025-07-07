@@ -1,3 +1,13 @@
+# TODO
+
+- [ ] Manual game controls that support starting, restarting, rewinding, and forfeiting games
+- [ ] Manual games that can be played across computers
+- [ ] More sophisticated strategies for bots
+- [ ] Game move record (including erroneous moves)
+- [ ] Keyboard controls for drag-and-drop pieces
+- [x] Move manual game to landing page
+- [ ] Rulebook available in-game
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

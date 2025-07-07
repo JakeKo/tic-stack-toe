@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
+import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router";
-import App from "./App";
 import AutoPlayer from "./pages/AutoPlayer";
 import ManualPlayer from "./pages/ManualPlayer";
 import { DndProvider } from "react-dnd";
@@ -17,9 +17,8 @@ root.render(
       <DndProvider backend={HTML5Backend}>
         <BrowserRouter>
           <Routes>
-            <Route index element={<App />} />
+            <Route index element={<ManualPlayer />} />
             <Route path="/auto" element={<AutoPlayer />} />
-            <Route path="/manual" element={<ManualPlayer />} />
           </Routes>
         </BrowserRouter>
       </DndProvider>
