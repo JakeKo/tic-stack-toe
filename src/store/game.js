@@ -53,7 +53,7 @@ function useGame() {
 function useGamePieceColor(playerName) {
   return useSelector((state) => {
     if (playerName === state.game.p1.name) {
-      return "green";
+      return "blue";
     } else if (playerName === state.game.p2.name) {
       return "red";
     }
